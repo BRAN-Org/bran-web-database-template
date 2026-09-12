@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BRAN Open Data - API Pública e Painel de Metadados</title>
+  <title>BRAN Open Data - API Pública e Portal de Metadados</title>
   
   <link rel="icon" href="https://avatars.githubusercontent.com/u/328064865?v=4" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,34 +13,51 @@
 
   <div class="container">
     
-    <!-- HEADER -->
+    <!-- TOP HEADER -->
     <header class="app-header">
-      <div class="logo-area">
-        <div class="logo-icon"><i class="fa-solid fa-server"></i></div>
-        <div class="logo-text">
-          <h1 id="header-title">BRAN <span>OpenData</span></h1>
-          <p id="header-subtitle">API Aberta e Curadoria Metodológica dos Anais</p>
+      <!-- Esquerda: Logo genérica substituível + Nome do Evento / Faculdade / Periódico -->
+      <a href="/" class="logo-area" id="logo-home-link">
+        <div class="logo-icon-generic" id="logo-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
         </div>
-      </div>
+        <div class="logo-text">
+          <h1 id="header-institution-name">BRAN <span>OpenData</span></h1>
+          <p id="header-subtitle">Acervo e Anais da Faculdade / Evento Científico</p>
+        </div>
+      </a>
 
-      <div class="header-badges">
-        <span class="badge-pill" id="badge-doi"><i class="fa-solid fa-link"></i> DOI: 10.5281/zenodo.0000000</span>
-        <span class="badge-pill"><i class="fa-solid fa-graduation-cap"></i> Ciência Aberta</span>
+      <!-- Direita: Barra de Busca Rápida + Links GitHub e DOI -->
+      <div class="header-actions-right">
+        <div class="top-search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="top-quick-search" class="top-search-input" placeholder="Pesquisar em todo o acervo...">
+        </div>
+
+        <a href="https://github.com/BRAN-Org/bran-web-database-template" target="_blank" id="header-github-link" class="header-link-btn">
+          <i class="fa-brands fa-github"></i> <span>GitHub</span>
+        </a>
+
+        <a href="https://doi.org/10.5281/zenodo.0000000" target="_blank" id="header-doi-link" class="header-link-btn">
+          <i class="fa-solid fa-link"></i> <span id="header-doi-text">DOI</span>
+        </a>
       </div>
     </header>
 
-    <!-- NAVIGATION PILL TABS -->
+    <!-- CENTERED PILL TAB NAVIGATION BAR -->
     <nav class="nav-tabs">
-      <button class="tab-btn active" data-tab="dashboard-tab">
-        <i class="fa-solid fa-chart-line"></i> Painel de Estatísticas
+      <button class="tab-btn active" data-tab="home-tab" id="tab-btn-home">
+        <i class="fa-solid fa-house"></i> Início
       </button>
-      <button class="tab-btn" data-tab="explorer-tab" id="explorer-tab-btn">
+      <button class="tab-btn" data-tab="explorer-tab" id="tab-btn-explorer">
         <i class="fa-solid fa-magnifying-glass"></i> Explorador de Dados
       </button>
-      <button class="tab-btn" data-tab="correlations-tab">
+      <button class="tab-btn" data-tab="dashboard-tab" id="tab-btn-dashboard">
+        <i class="fa-solid fa-chart-line"></i> Painel Geral
+      </button>
+      <button class="tab-btn" data-tab="correlations-tab" id="tab-btn-correlations">
         <i class="fa-solid fa-diagram-project"></i> Análises & Correlações
       </button>
-      <button class="tab-btn" data-tab="docs-tab">
+      <button class="tab-btn" data-tab="docs-tab" id="tab-btn-docs">
         <i class="fa-solid fa-code"></i> Documentação da API
       </button>
     </nav>
@@ -48,10 +65,110 @@
     <!-- MAIN CONTENT -->
     <main>
 
-      <!-- 1. PAINEL DE ESTATÍSTICAS -->
-      <section id="dashboard-tab" class="tab-panel active">
-        
-        <!-- 4 Stat Cards Grid -->
+      <!-- 1. TELA INICIAL (LANDING OVERVIEW) -->
+      <section id="home-tab" class="tab-panel active">
+        <div class="home-hero-card">
+          <div class="home-institution-tag" id="home-institution-tag">
+            <i class="fa-solid fa-university"></i> <span id="tag-institution-name">Faculdade / Periódico / Evento Científico</span>
+          </div>
+
+          <h1 class="home-title" id="home-title">
+            BRAN Academic Database Template
+          </h1>
+
+          <div class="home-description-box" id="home-description">
+            Infraestrutura aberta de dados acadêmicos e científicos. Este portal disponibiliza acervos públicos de anais, edições e periódicos em formatos limpos e padronizados, com API REST pública e ferramentas para análise cientométrica e bibliométrica no Brasil.
+          </div>
+
+          <!-- Quick Navigation CTA Cards -->
+          <div class="home-cta-grid">
+            <div class="home-cta-card" onclick="document.querySelector('[data-tab=\'explorer-tab\']').click()">
+              <h3><i class="fa-solid fa-magnifying-glass"></i> Explorar Registros</h3>
+              <p>Consulte a lista completa de artigos, filtre por autores, anos e ferramentas utilizadas.</p>
+            </div>
+
+            <div class="home-cta-card" onclick="document.querySelector('[data-tab=\'dashboard-tab\']').click()">
+              <h3><i class="fa-solid fa-chart-line"></i> Painel de Estatísticas</h3>
+              <p>Visualize métricas consolidadas, rankings de softwares e evolução temporal do acervo.</p>
+            </div>
+
+            <div class="home-cta-card" onclick="document.querySelector('[data-tab=\'docs-tab\']').click()">
+              <h3><i class="fa-solid fa-code"></i> API Sandbox</h3>
+              <p>Integre seus scripts em Python, JavaScript ou cURL via API REST pública e gratuita.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. EXPLORADOR DE DADOS -->
+      <section id="explorer-tab" class="tab-panel">
+        <div class="explorer-layout">
+          
+          <!-- Sidebar Filters -->
+          <aside class="filters-sidebar glass-panel">
+            <div class="sidebar-header">
+              <h3><i class="fa-solid fa-sliders"></i> Filtros de Busca</h3>
+              <button id="btn-clear-filters" class="btn-clear">Limpar</button>
+            </div>
+
+            <div class="filter-group">
+              <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> Busca Textual</label>
+              <input type="text" id="search-input" class="filter-input" placeholder="Título, autor, resumo, palavra-chave...">
+            </div>
+
+            <div class="filter-group">
+              <label><i class="fa-solid fa-calendar-days"></i> Edições do Evento</label>
+              <div class="checkbox-list" id="year-checkbox-list"></div>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-tool-select"><i class="fa-solid fa-wrench"></i> Filtrar por Ferramenta</label>
+              <select id="filter-tool-select" class="filter-select">
+                <option value="">Todas as ferramentas</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-source-select"><i class="fa-solid fa-database"></i> Fonte de Coleta de Dados</label>
+              <select id="filter-source-select" class="filter-select">
+                <option value="">Todas as fontes</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-stage-select"><i class="fa-solid fa-arrows-split-up-and-left"></i> Etapa Metodológica</label>
+              <select id="filter-stage-select" class="filter-select">
+                <option value="">Qualquer etapa</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="checkbox-item">
+                <input type="checkbox" id="filter-hastool-checkbox">
+                <span>Apenas artigos que usam ferramentas</span>
+              </label>
+            </div>
+          </aside>
+
+          <!-- Article Cards List -->
+          <div class="explorer-main">
+            <div class="results-bar">
+              <span id="results-count-text">Mostrando 0 artigos filtrados</span>
+              <div class="pagination-controls">
+                <button id="btn-prev-page" class="btn-icon" disabled><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+                <span id="pagination-page-info" style="font-weight: 600; font-size: 0.8rem;">Pág. 1</span>
+                <button id="btn-next-page" class="btn-icon">Próxima <i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+
+            <div class="articles-list" id="articles-list"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 3. PAINEL GERAL -->
+      <section id="dashboard-tab" class="tab-panel">
         <div class="stats-grid">
           <div class="stat-card">
             <h3><i class="fa-solid fa-file-invoice"></i> Total de Artigos</h3>
@@ -78,7 +195,6 @@
           </div>
         </div>
 
-        <!-- Customizer Toolbar -->
         <div class="charts-toolbar glass-panel">
           <div class="toolbar-title">
             <i class="fa-solid fa-chart-line"></i> Personalizar Visualização
@@ -105,7 +221,6 @@
           </div>
         </div>
 
-        <!-- 4 Core Charts 2x2 Grid -->
         <div class="charts-grid">
           <div class="chart-card">
             <div class="chart-header">
@@ -145,88 +260,7 @@
         </div>
       </section>
 
-      <!-- 2. EXPLORADOR DE DADOS (CARDS LIST) -->
-      <section id="explorer-tab" class="tab-panel">
-        <div class="explorer-layout">
-          
-          <!-- Sidebar Filters -->
-          <aside class="filters-sidebar glass-panel">
-            <div class="sidebar-header">
-              <h3><i class="fa-solid fa-sliders"></i> Filtros de Busca</h3>
-              <button id="btn-clear-filters" class="btn-clear">Limpar</button>
-            </div>
-
-            <!-- Busca Textual -->
-            <div class="filter-group">
-              <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> Busca Textual</label>
-              <input type="text" id="search-input" class="filter-input" placeholder="Título, autor, resumo, palavra-chave...">
-            </div>
-
-            <!-- Edições Checkbox List -->
-            <div class="filter-group">
-              <label><i class="fa-solid fa-calendar-days"></i> Edições do Evento</label>
-              <div class="checkbox-list" id="year-checkbox-list">
-                <!-- Inserido dinamicamente via JS -->
-              </div>
-            </div>
-
-            <!-- Dropdown Ferramenta -->
-            <div class="filter-group">
-              <label for="filter-tool-select"><i class="fa-solid fa-wrench"></i> Filtrar por Ferramenta</label>
-              <select id="filter-tool-select" class="filter-select">
-                <option value="">Todas as ferramentas</option>
-              </select>
-            </div>
-
-            <!-- Dropdown Fonte de Dados -->
-            <div class="filter-group">
-              <label for="filter-source-select"><i class="fa-solid fa-database"></i> Fonte de Coleta de Dados</label>
-              <select id="filter-source-select" class="filter-select">
-                <option value="">Todas as fontes</option>
-              </select>
-            </div>
-
-            <!-- Dropdown Etapa Metodológica -->
-            <div class="filter-group">
-              <label for="filter-stage-select"><i class="fa-solid fa-arrows-split-up-and-left"></i> Etapa Metodológica</label>
-              <select id="filter-stage-select" class="filter-select">
-                <option value="">Qualquer etapa</option>
-              </select>
-            </div>
-
-            <!-- Checkbox Has Tool -->
-            <div class="filter-group">
-              <label class="checkbox-item">
-                <input type="checkbox" id="filter-hastool-checkbox">
-                <span>Apenas artigos que usam ferramentas</span>
-              </label>
-            </div>
-          </aside>
-
-          <!-- Main Cards List Area -->
-          <div class="explorer-main">
-            
-            <div class="results-bar">
-              <span id="results-count-text">Mostrando 0 artigos filtrados</span>
-              
-              <div class="pagination-controls">
-                <button id="btn-prev-page" class="btn-icon" disabled><i class="fa-solid fa-chevron-left"></i> Anterior</button>
-                <span id="pagination-page-info" style="font-weight: 600; font-size: 0.8rem;">Pág. 1</span>
-                <button id="btn-next-page" class="btn-icon">Próxima <i class="fa-solid fa-chevron-right"></i></button>
-              </div>
-            </div>
-
-            <!-- Article Cards List -->
-            <div class="articles-list" id="articles-list">
-              <!-- Cards inseridos via JS -->
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      <!-- 3. ANÁLISES & CORRELAÇÕES -->
+      <!-- 4. ANÁLISES & CORRELAÇÕES -->
       <section id="correlations-tab" class="tab-panel">
         <div class="charts-grid">
           <div class="chart-card">
@@ -249,7 +283,7 @@
         </div>
       </section>
 
-      <!-- 4. DOCUMENTAÇÃO DA API & SANDBOX -->
+      <!-- 5. DOCUMENTAÇÃO DA API & SANDBOX -->
       <section id="docs-tab" class="tab-panel">
         <div class="sandbox-card glass-panel">
           <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">Documentação e Sandbox da API REST</h2>
@@ -275,9 +309,30 @@
 
     </main>
 
-    <!-- FOOTER -->
+    <!-- INSTITUTIONAL FOOTER -->
     <footer class="site-footer">
-      <p>Desenvolvido por <strong>BRAN Org</strong> &bull; Iniciativa para a promoção da Ciência Aberta no Brasil.</p>
+      <div class="container">
+        <div class="footer-layout">
+          <div class="footer-brand">
+            <h3 style="font-size: 1rem; font-weight: 700;">BRAN <strong>OpenData</strong></h3>
+            <p>Infraestrutura Aberta para a Informação Acadêmica e Científica no Brasil.</p>
+          </div>
+
+          <div class="footer-links">
+            <a href="https://github.com/BRAN-Org/bran-web-database-template/issues" target="_blank" id="footer-issues-link" class="footer-link-item">
+              <i class="fa-solid fa-bug"></i> <span>Reportar Problemas / Issues</span>
+            </a>
+            <a href="https://github.com/BRAN-Org/bran-web-database-template" target="_blank" id="footer-github-link" class="footer-link-item">
+              <i class="fa-brands fa-github"></i> <span>Repositório GitHub</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-bottom-bar">
+          <div>&copy; 2026 BRAN Org &bull; Em conformidade com os Princípios FAIR e BOAI.</div>
+          <div>Desenvolvido com <i class="fa-solid fa-heart" style="color: var(--color-emerald);"></i> para a comunidade acadêmica</div>
+        </div>
+      </div>
     </footer>
 
   </div>

@@ -1,12 +1,11 @@
 /* ==========================================================================
    BRAN Org - Open Data Database Portal
-   Inspired by EBBC OpenData Design System
+   Home Screen & Institutional Header Redesign
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Apple/Dark Monochromatic Palette */
   --bg-primary: #000000;
   --bg-secondary: #0a0a0c;
   --bg-surface: #16161a;
@@ -29,14 +28,13 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
-  --max-width: 1200px;
+  --max-width: 1240px;
   --border-radius-lg: 12px;
   --border-radius-md: 8px;
   --border-radius-sm: 5px;
   --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Base resets */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -84,42 +82,45 @@ body {
 }
 
 /* ==========================================================================
-   HEADER & NAVIGATION TABS
+   TOP HEADER & NAVBAR
    ========================================================================== */
 
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 0 20px;
+  padding: 20px 0;
   border-bottom: 1px solid var(--border-color);
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
 }
 
+/* Logo na esquerda */
 .logo-area {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  text-decoration: none;
 }
 
-.logo-icon {
-  width: 40px;
-  height: 40px;
+.logo-icon-generic {
+  width: 38px;
+  height: 38px;
   background: #ffffff;
   color: #000000;
   border-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
+  flex-shrink: 0;
 }
 
 .logo-text h1 {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--text-primary);
@@ -127,28 +128,72 @@ body {
 
 .logo-text p {
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 
-.header-badges {
+/* Top Quick Search Bar + External Links (Direita) */
+.header-actions-right {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.badge-pill {
-  font-size: 0.75rem;
+.top-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.top-search-bar i {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.top-search-input {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 7px 12px 7px 34px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-family: var(--font-sans);
+  width: 220px;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.top-search-input:focus {
+  width: 280px;
+  border-color: var(--border-color-focus);
+  background: var(--bg-surface-hover);
+}
+
+.header-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-secondary);
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 20px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface-hover);
+    border-color: var(--border-color-hover);
+  }
 }
 
-/* Centered Pill Tab Bar */
+/* Centered Pill Tab Navigation Bar */
 .nav-tabs {
   display: flex;
   justify-content: center;
@@ -161,6 +206,7 @@ body {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
@@ -168,9 +214,9 @@ body {
   border: none;
   color: var(--text-secondary);
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  padding: 8px 20px;
+  padding: 8px 18px;
   border-radius: 20px;
   cursor: pointer;
   transition: var(--transition-smooth);
@@ -194,7 +240,90 @@ body {
 }
 
 /* ==========================================================================
-   STATISTICS DASHBOARD (4 CARDS + TOOLBAR + 4 CHARTS)
+   HOME SCREEN (LANDING OVERVIEW)
+   ========================================================================== */
+
+.home-hero-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 40px;
+  margin-bottom: 32px;
+}
+
+.home-institution-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-emerald);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  margin-bottom: 16px;
+}
+
+.home-title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.home-description-box {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 900px;
+  margin-bottom: 28px;
+}
+
+.home-cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.home-cta-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 20px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    border-color: var(--border-color-hover);
+    background: var(--bg-surface-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.home-cta-card h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-cta-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   STATISTICS DASHBOARD
    ========================================================================== */
 
 .stats-grid {
@@ -213,11 +342,11 @@ body {
   flex-direction: column;
   justify-content: space-between;
   transition: var(--transition-smooth);
-}
 
-.stat-card:hover {
-  border-color: var(--border-color-hover);
-  transform: translateY(-2px);
+  &:hover {
+    border-color: var(--border-color-hover);
+    transform: translateY(-2px);
+  }
 }
 
 .stat-card h3 {
@@ -291,11 +420,6 @@ body {
   cursor: pointer;
 }
 
-.toolbar-select:focus {
-  border-color: var(--border-color-focus);
-}
-
-/* Charts Grid */
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
@@ -336,7 +460,7 @@ body {
 }
 
 /* ==========================================================================
-   DATA EXPLORER (SIDEBAR + ARTICLE CARDS LIST)
+   DATA EXPLORER
    ========================================================================== */
 
 .explorer-layout {
@@ -351,7 +475,6 @@ body {
   }
 }
 
-/* Sidebar */
 .filters-sidebar {
   padding: 20px;
   height: fit-content;
@@ -409,11 +532,6 @@ body {
   outline: none;
 }
 
-.filter-input:focus, .filter-select:focus {
-  border-color: var(--border-color-focus);
-}
-
-/* Checkbox Lists */
 .checkbox-list {
   display: flex;
   flex-direction: column;
@@ -441,7 +559,6 @@ body {
   cursor: pointer;
 }
 
-/* Article Cards List */
 .explorer-main {
   display: flex;
   flex-direction: column;
@@ -498,12 +615,12 @@ body {
   padding: 20px 24px;
   cursor: pointer;
   transition: var(--transition-smooth);
-}
 
-.article-card:hover {
-  border-color: var(--border-color-hover);
-  background: var(--bg-surface-hover);
-  transform: translateY(-2px);
+  &:hover {
+    border-color: var(--border-color-hover);
+    background: var(--bg-surface-hover);
+    transform: translateY(-2px);
+  }
 }
 
 .article-card-header {
@@ -670,10 +787,7 @@ body {
   line-height: 1.6;
 }
 
-/* ==========================================================================
-   API SANDBOX
-   ========================================================================== */
-
+/* API Sandbox */
 .sandbox-card {
   padding: 28px;
 }
@@ -718,12 +832,61 @@ body {
   cursor: pointer;
 }
 
-/* Footer */
+/* ==========================================================================
+   INSTITUTIONAL FOOTER & SUPPORT LINKS
+   ========================================================================== */
+
 .site-footer {
   border-top: 1px solid var(--border-color);
-  padding: 32px 0;
+  padding: 40px 0;
   margin-top: 60px;
-  color: var(--text-muted);
+  background: var(--bg-secondary);
+}
+
+.footer-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.footer-brand p {
+  color: var(--text-secondary);
   font-size: 0.85rem;
-  text-align: center;
+  margin-top: 6px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-link-item {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.footer-bottom-bar {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: 12px;
 }

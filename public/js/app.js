@@ -11,12 +11,13 @@ const chartInstances = {};
 document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
   initModal();
+  initTopQuickSearch();
 
   try {
     const resConfig = await fetch('/api/v1/config');
     appConfig = await resConfig.json();
 
-    applyConfigToHeader(appConfig);
+    applyConfigToUI(appConfig);
     initToolbarControls();
 
     await loadStatsDashboard();
@@ -28,23 +29,72 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-function applyConfigToHeader(config) {
+function applyConfigToUI(config) {
   if (!config) return;
   const title = config.dataset?.title || 'BRAN Open Data';
-  document.title = `${title} · BRAN Org`;
+  const orgName = config.organization?.name || 'BRAN Org';
+  const instName = config.organization?.institutionName || 'Faculdade / Periódico / Evento Científico';
 
-  const headerTitle = document.getElementById('header-title');
-  if (headerTitle) headerTitle.innerHTML = `${title} <span>OpenData</span>`;
+  document.title = `${title} · ${orgName}`;
 
-  const doiBadge = document.getElementById('badge-doi');
-  if (doiBadge && config.dataset?.doi) {
-    doiBadge.innerHTML = `<i class="fa-solid fa-link"></i> DOI: ${config.dataset.doi}`;
+  const headerTitle = document.getElementById('header-institution-name');
+  if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
+
+  const tagInstName = document.getElementById('tag-institution-name');
+  if (tagInstName) tagInstName.textContent = instName;
+
+  const homeTitle = document.getElementById('home-title');
+  if (homeTitle) homeTitle.textContent = title;
+
+  const homeDesc = document.getElementById('home-description');
+  if (homeDesc && config.dataset?.description) {
+    homeDesc.textContent = config.dataset.description;
+  }
+
+  // Bind URLs institucionais
+  const githubUrl = config.organization?.githubUrl;
+  if (githubUrl) {
+    const hGithub = document.getElementById('header-github-link');
+    if (hGithub) hGithub.href = githubUrl;
+    const fGithub = document.getElementById('footer-github-link');
+    if (fGithub) fGithub.href = githubUrl;
+  }
+
+  const doiUrl = config.organization?.doiUrl || (config.dataset?.doi ? `https://doi.org/${config.dataset.doi}` : null);
+  if (doiUrl) {
+    const hDoi = document.getElementById('header-doi-link');
+    if (hDoi) hDoi.href = doiUrl;
+    const hDoiText = document.getElementById('header-doi-text');
+    if (hDoiText && config.dataset?.doi) hDoiText.textContent = `DOI: ${config.dataset.doi.replace('https://doi.org/', '')}`;
+  }
+
+  const issuesUrl = config.organization?.issuesUrl;
+  if (issuesUrl) {
+    const fIssues = document.getElementById('footer-issues-link');
+    if (fIssues) fIssues.href = issuesUrl;
   }
 }
 
 /**
- * Toolbar de Personalização de Gráficos (Paleta + Tipo)
+ * Conecta a Barra de Busca Rápida Superior com o Explorador de Dados
  */
+function initTopQuickSearch() {
+  const topInput = document.getElementById('top-quick-search');
+  const mainSearchInput = document.getElementById('search-input');
+
+  if (topInput) {
+    topInput.addEventListener('input', debounce(() => {
+      const val = topInput.value;
+      if (mainSearchInput) mainSearchInput.value = val;
+
+      // Trocar dinamicamente para a aba do Explorador de Dados
+      document.querySelector('[data-tab="explorer-tab"]')?.click();
+      currentOffset = 0;
+      loadExplorerData();
+    }, 300));
+  }
+}
+
 function initToolbarControls() {
   const paletteSelect = document.getElementById('chart-theme-select');
   const typeSelect = document.getElementById('chart-type-select');
@@ -72,7 +122,6 @@ async function loadStatsDashboard() {
     const res = await fetch(`/api/v1/${entity}/stats`);
     const stats = await res.json();
 
-    // População dos 4 Cards de Estatísticas
     const totalEl = document.getElementById('stat-total-articles');
     if (totalEl) totalEl.textContent = stats.totalRecords || 0;
 
@@ -85,7 +134,6 @@ async function loadStatsDashboard() {
     const authorsEl = document.getElementById('stat-unique-authors');
     if (authorsEl) authorsEl.textContent = stats.topLists?.topAuthors?.data?.length || 0;
 
-    // Inicialização dos 4 Gráficos do Dashboard
     chartInstances['years'] = new SimpleChart('chart-years');
     chartInstances['tools'] = new SimpleChart('chart-tools');
     chartInstances['sources'] = new SimpleChart('chart-sources');
@@ -117,7 +165,6 @@ function updateAllCharts() {
 }
 
 function populateSidebarOptions(stats) {
-  // Checkbox de Anos
   const yearContainer = document.getElementById('year-checkbox-list');
   if (yearContainer && stats.breakdowns?.yearDistribution?.data) {
     const years = Object.keys(stats.breakdowns.yearDistribution.data).sort((a, b) => b - a);
@@ -138,7 +185,6 @@ function populateSidebarOptions(stats) {
     });
   }
 
-  // Dropdown Tools
   const toolSelect = document.getElementById('filter-tool-select');
   if (toolSelect && stats.topLists?.topTools?.data) {
     stats.topLists.topTools.data.forEach(t => {
@@ -150,7 +196,6 @@ function populateSidebarOptions(stats) {
     toolSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
   }
 
-  // Dropdown Sources
   const sourceSelect = document.getElementById('filter-source-select');
   if (sourceSelect && stats.topLists?.topSources?.data) {
     stats.topLists.topSources.data.forEach(s => {
@@ -176,7 +221,6 @@ async function loadExplorerData() {
     params.set('search', searchInput.value);
   }
 
-  // Coletar anos selecionados nos checkboxes
   const selectedYears = Array.from(document.querySelectorAll('.year-filter-cb:checked')).map(cb => cb.value);
   if (selectedYears.length > 0) {
     params.set('year', selectedYears.join(','));
@@ -207,9 +251,6 @@ async function loadExplorerData() {
   }
 }
 
-/**
- * Renderiza Lista em Cartões Fluídos de Artigos
- */
 function renderArticleCards(items) {
   const container = document.getElementById('articles-list');
   if (!container) return;
@@ -234,9 +275,7 @@ function renderArticleCards(items) {
     const title = item.title || item.titulo || 'Sem título';
     const authors = Array.isArray(item.authors) ? item.authors.join(', ') : (item.authors || 'N/A');
 
-    // Badges coloridos por categoria
     let badgesHtml = '';
-    
     if (Array.isArray(item.data_sources)) {
       item.data_sources.forEach(src => {
         badgesHtml += `<span class="badge-source">${escapeHtml(src)}</span> `;
@@ -439,6 +478,9 @@ function initTabs() {
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       if (searchInput) searchInput.value = '';
+      const topSearch = document.getElementById('top-quick-search');
+      if (topSearch) topSearch.value = '';
+
       document.querySelectorAll('.year-filter-cb').forEach(cb => cb.checked = false);
       const toolSelect = document.getElementById('filter-tool-select');
       if (toolSelect) toolSelect.value = '';
