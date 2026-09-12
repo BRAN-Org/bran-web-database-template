@@ -320,12 +320,21 @@ function renderArticleCards(items) {
       });
     }
 
-    const doiBadgeHtml = doi ? `<span class="doi-link-text">${escapeHtml(doi)}</span>` : '';
+    const realArticleUrl = item.url || item.article_url || item.link || item.original_url || (item.doi ? (item.doi.startsWith('http') ? item.doi : `https://doi.org/${item.doi}`) : null);
+    const pdfUrl = item.pdf_url;
+
+    let linksHeaderHtml = '';
+    if (realArticleUrl) {
+      linksHeaderHtml += `<a href="${escapeHtml(realArticleUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="Acessar Publicação"><i class="fa-solid fa-arrow-up-right-from-square"></i> Publicação</a> `;
+    }
+    if (pdfUrl) {
+      linksHeaderHtml += `<a href="${escapeHtml(pdfUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link pdf" title="Baixar PDF"><i class="fa-solid fa-file-pdf"></i> Baixar PDF</a>`;
+    }
 
     card.innerHTML = `
       <div class="article-card-header">
         <span class="badge-year">${year}</span>
-        ${doiBadgeHtml}
+        <div class="card-action-links">${linksHeaderHtml}</div>
       </div>
       <h3 class="article-title">${escapeHtml(title)}</h3>
       <p class="article-authors">${escapeHtml(authors)}</p>
@@ -370,7 +379,7 @@ function openArticleModal(item) {
     if (realArticleUrl) {
       doiLink.href = realArticleUrl;
       doiLink.style.display = 'inline-block';
-      doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Artigo Original`;
+      doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Publicação`;
     } else {
       doiLink.style.display = 'none';
     }
