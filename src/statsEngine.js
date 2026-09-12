@@ -15,7 +15,9 @@ export function calculateStats() {
     entityName: config.dataset?.pluralName || 'Registros',
     topLists: {},
     breakdowns: {},
-    metrics: {}
+    metrics: {},
+    pareto: calculateParetoData('tools', 10),
+    temporalStacked: calculateTemporalStacked('tools', 5)
   };
 
   if (total === 0) return stats;
@@ -226,7 +228,7 @@ export function calculateScatterData() {
 /**
  * Análise de Pareto / Bradford (Distribuição acumulada de Frequência)
  */
-export function calculateParetoData(field = 'authors', limit = 10) {
+export function calculateParetoData(field = 'tools', limit = 10) {
   const items = getAllItems();
   const counts = {};
   let totalOccurrences = 0;
@@ -248,7 +250,7 @@ export function calculateParetoData(field = 'authors', limit = 10) {
     .slice(0, limit);
 
   let cumulative = 0;
-  const data = sorted.map(item => {
+  const paretoItems = sorted.map(item => {
     cumulative += item.count;
     const cumulativePercent = totalOccurrences > 0 
       ? parseFloat(((cumulative / totalOccurrences) * 100).toFixed(1))
@@ -257,9 +259,17 @@ export function calculateParetoData(field = 'authors', limit = 10) {
     return {
       name: item.name,
       count: item.count,
-      cumulativePercent
+      cumulativePercent,
+      cumulativePercentage: cumulativePercent
     };
   });
 
-  return { totalOccurrences, data };
+  const pareto80Index = paretoItems.findIndex(i => i.cumulativePercent >= 80);
+
+  return {
+    totalOccurrences,
+    items: paretoItems,
+    data: paretoItems,
+    pareto80Index: pareto80Index !== -1 ? pareto80Index : Math.max(0, paretoItems.length - 1)
+  };
 }

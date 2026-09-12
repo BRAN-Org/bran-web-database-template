@@ -38,19 +38,24 @@ export class SimpleChart {
 
   setupCanvas() {
     const dpr = window.devicePixelRatio || 1;
-    const rect = this.canvas.getBoundingClientRect();
     const parent = this.canvas.parentElement;
 
-    let width = rect.width;
-    let height = rect.height;
+    let width = parent ? parent.clientWidth : this.canvas.getBoundingClientRect().width;
+    let height = parent ? parent.clientHeight : this.canvas.getBoundingClientRect().height;
 
-    if (!width || width === 0) width = parent ? parent.clientWidth : 400;
-    if (!height || height === 0) height = parent ? parent.clientHeight : 260;
-    if (!width || width === 0) width = 400;
-    if (!height || height === 0) height = 260;
+    if (!width || width <= 0) width = 400;
+    if (!height || height <= 0) height = 260;
 
-    this.canvas.width = width * dpr;
-    this.canvas.height = height * dpr;
+    this.canvas.width = Math.floor(width * dpr);
+    this.canvas.height = Math.floor(height * dpr);
+    this.canvas.style.width = `${width}px`;
+    this.canvas.style.height = `${height}px`;
+
+    if (typeof this.ctx.resetTransform === 'function') {
+      this.ctx.resetTransform();
+    } else {
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
     this.ctx.scale(dpr, dpr);
     return { width, height };
   }
@@ -77,23 +82,24 @@ export class SimpleChart {
 
     const colors = this.getPaletteColors();
     const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
-    const barHeight = Math.min(26, (height - 20) / items.length - 6);
-    const startX = 140;
-    const chartWidth = Math.max(width - startX - 45, 50);
+    const barHeight = Math.min(24, Math.floor((height - 20) / items.length - 6));
+    const startX = Math.min(130, Math.floor(width * 0.28));
+    const rightMargin = 45;
+    const chartWidth = Math.max(width - startX - rightMargin, 50);
 
     items.forEach((item, index) => {
-      const label = item[labelKey] || item.name || '';
+      const label = String(item[labelKey] || item.name || '');
       const val = item[valueKey] ?? item.count ?? 0;
-      const y = 10 + index * (barHeight + 8);
-      const barW = (val / maxVal) * chartWidth;
+      const y = 10 + index * (barHeight + 6);
+      const barW = Math.min((val / maxVal) * chartWidth, chartWidth);
 
       // Label
       ctx.fillStyle = '#8a9390';
-      ctx.font = '500 12px "Geist Mono", monospace';
+      ctx.font = '500 11px "Geist Mono", monospace';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
-      const truncatedLabel = label.length > 18 ? label.substring(0, 16) + '..' : label;
-      ctx.fillText(truncatedLabel, startX - 10, y + barHeight / 2);
+      const truncatedLabel = label.length > 16 ? label.substring(0, 14) + '..' : label;
+      ctx.fillText(truncatedLabel, startX - 8, y + barHeight / 2);
 
       // Track
       ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
@@ -102,14 +108,16 @@ export class SimpleChart {
 
       // Bar Fill
       ctx.fillStyle = colors[index % colors.length];
-      this.drawRoundedRect(startX, y, Math.max(barW, 6), barHeight, 4);
-      ctx.fill();
+      if (barW > 0) {
+        this.drawRoundedRect(startX, y, Math.max(barW, 4), barHeight, 4);
+        ctx.fill();
+      }
 
       // Value text
       ctx.fillStyle = '#ffffff';
       ctx.font = '700 11px "Geist Mono", monospace';
       ctx.textAlign = 'left';
-      ctx.fillText(String(val), startX + barW + 8, y + barHeight / 2);
+      ctx.fillText(String(val), startX + barW + 6, y + barHeight / 2);
     });
   }
 
@@ -219,12 +227,12 @@ export class SimpleChart {
   }
 
   renderPareto(data) {
-    if (!this.ctx || !data || !data.items || data.items.length === 0) return;
+    const items = data?.items || data?.data;
+    if (!this.ctx || !data || !items || items.length === 0) return;
     const { ctx } = this;
     const { width, height } = this.setupCanvas();
     ctx.clearRect(0, 0, width, height);
 
-    const items = data.items;
     const paddingLeft = 50;
     const paddingRight = 50;
     const paddingTop = 30;
@@ -261,7 +269,8 @@ export class SimpleChart {
 
     items.forEach((item, i) => {
       const x = paddingLeft + (i / items.length) * chartW + (chartW / items.length) / 2;
-      const y = height - paddingBottom - (item.cumulativePercentage / 100) * chartH;
+      const pct = item.cumulativePercentage ?? item.cumulativePercent ?? 0;
+      const y = height - paddingBottom - (pct / 100) * chartH;
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });
@@ -301,8 +310,14 @@ export class SimpleChart {
     const chartH = Math.max(height - paddingTop - paddingBottom, 50);
     const colors = this.getPaletteColors();
 
+    const getValue = (item) => {
+      if (typeof item === 'number') return item;
+      if (item && typeof item === 'object') return item.count ?? item.percentage ?? 0;
+      return 0;
+    };
+
     const yearlyTotals = years.map((_, yIdx) => {
-      return series.reduce((sum, s) => sum + (s.data[yIdx] || 0), 0);
+      return series.reduce((sum, s) => sum + getValue(s.data[yIdx]), 0);
     });
     const maxVal = Math.max(...yearlyTotals, 1);
 
@@ -314,7 +329,7 @@ export class SimpleChart {
       const x = paddingLeft + yIdx * groupW + (groupW - barW) / 2;
 
       series.forEach((s, sIdx) => {
-        const val = s.data[yIdx] || 0;
+        const val = getValue(s.data[yIdx]);
         const sliceH = (val / maxVal) * chartH;
         currentY -= sliceH;
 

@@ -31,23 +31,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function applyConfigToUI(config) {
   if (!config) return;
-  const title = config.dataset?.title || 'BRAN Open Data';
+  const title = config.dataset?.title || 'OpenData OS';
   const orgName = config.organization?.name || 'BRAN Org';
   const instName = config.organization?.institutionName || 'Faculdade / Periódico / Evento Científico';
   const description = config.dataset?.description || '';
 
-  document.title = `${title} · ${orgName}`;
+  document.title = title;
 
   // Header Title & Subtitle
   const headerTitle = document.getElementById('header-title');
-  if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
+  if (headerTitle) {
+    if (orgName && orgName !== 'BRAN Org') {
+      headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
+    } else {
+      headerTitle.innerHTML = `<span>OpenData</span> OS`;
+    }
+  }
 
   const headerSub = document.getElementById('header-subtitle');
   if (headerSub) headerSub.textContent = instName;
 
-  // Home Hero Section
+  // Home Hero Section (Clean display of institution name without "BRAN Org — " prefix)
   const homeOrgName = document.getElementById('home-org-name');
-  if (homeOrgName) homeOrgName.textContent = `${orgName} — ${instName}`;
+  if (homeOrgName) homeOrgName.textContent = instName;
 
   const homeDatasetTitle = document.getElementById('home-dataset-title');
   if (homeDatasetTitle) homeDatasetTitle.textContent = title;
@@ -57,10 +63,10 @@ function applyConfigToUI(config) {
 
   // Footer Info
   const footerOrg = document.getElementById('footer-org-name');
-  if (footerOrg) footerOrg.textContent = orgName;
+  if (footerOrg) footerOrg.textContent = instName;
 
   const footerInst = document.getElementById('footer-inst-name');
-  if (footerInst) footerInst.textContent = instName;
+  if (footerInst) footerInst.textContent = '';
 
   // Badges & External Links
   const doiText = document.getElementById('badge-doi-text');
@@ -87,6 +93,10 @@ function applyConfigToUI(config) {
     footerIssues.href = config.organization.issuesUrl;
   }
 }
+
+window.addEventListener('resize', debounce(() => {
+  updateAllCharts();
+}, 150));
 
 function initToolbarControls() {
   const paletteSelect = document.getElementById('chart-theme-select');
