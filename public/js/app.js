@@ -489,11 +489,25 @@ function initSandbox() {
       const codeEl = document.getElementById('sandbox-code');
       if (codeEl) {
         navigator.clipboard.writeText(codeEl.textContent);
-        copyBtn.textContent = 'Copiado!';
-        setTimeout(() => copyBtn.textContent = 'Copiar Código', 2000);
+        copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+        setTimeout(() => copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar Código', 2000);
       }
     });
   }
+
+  const docLinks = document.querySelectorAll('.docs-menu-link');
+  docLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetDocId = link.getAttribute('data-doc');
+      
+      docLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      document.querySelectorAll('.doc-card').forEach(card => card.classList.remove('active'));
+      document.getElementById(targetDocId)?.classList.add('active');
+    });
+  });
 
   updateSandboxCode();
 }
@@ -514,7 +528,11 @@ function updateSandboxCode() {
   } else if (lang === 'javascript') {
     codeEl.textContent = `// Requisição em JavaScript (Fetch API)\nfetch("${targetUrl}")\n  .then(response => response.json())\n  .then(data => console.log(data));`;
   } else if (lang === 'python') {
-    codeEl.textContent = `# Requisição em Python\nimport requests\n\nurl = "${targetUrl}"\nresponse = requests.get(url)\ndata = response.json()\nprint(data)`;
+    codeEl.textContent = `# Requisição em Python (Requests)\nimport requests\n\nurl = "${targetUrl}"\nresponse = requests.get(url)\ndata = response.json()\nprint(data)`;
+  } else if (lang === 'node') {
+    codeEl.textContent = `// Requisição em Node.js (Axios)\nconst axios = require('axios');\n\naxios.get("${targetUrl}")\n  .then(response => console.log(response.data))\n  .catch(error => console.error(error));`;
+  } else if (lang === 'r') {
+    codeEl.textContent = `# Requisição em R (httr & jsonlite)\nlibrary(httr)\nlibrary(jsonlite)\n\nres <- GET("${targetUrl}")\ndata <- fromJSON(content(res, "text"))\nprint(data)`;
   }
 }
 

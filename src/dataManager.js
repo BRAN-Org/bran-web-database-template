@@ -1,12 +1,12 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getDatasetConfig } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DATA_DIR = join(__dirname, '../data');
+const DEFAULT_DATA_DIR = join(__dirname, '../data');
 
 let loadedItems = [];
 
@@ -23,17 +23,21 @@ export function normalizeString(str) {
 }
 
 /**
- * Carrega todos os arquivos JSON do diretório data/ em memória
+ * Carrega todos os arquivos JSON do diretório de dados em memória
  */
 export function loadData() {
   if (loadedItems.length > 0) return loadedItems;
 
+  const targetDir = process.env.DATASET_DIR
+    ? (isAbsolute(process.env.DATASET_DIR) ? process.env.DATASET_DIR : join(process.cwd(), process.env.DATASET_DIR))
+    : DEFAULT_DATA_DIR;
+
   const items = [];
   try {
-    if (existsSync(DATA_DIR)) {
-      const files = readdirSync(DATA_DIR).filter(f => f.endsWith('.json'));
+    if (existsSync(targetDir)) {
+      const files = readdirSync(targetDir).filter(f => f.endsWith('.json'));
       for (const file of files) {
-        const filePath = join(DATA_DIR, file);
+        const filePath = join(targetDir, file);
         try {
           const raw = readFileSync(filePath, 'utf-8');
           const data = JSON.parse(raw);
@@ -52,7 +56,7 @@ export function loadData() {
   }
 
   loadedItems = items;
-  console.log(`📦 [BRAN Template] Total de registros carregados em memória: ${loadedItems.length}`);
+  console.log(`📦 [BRAN Template] Total de registros carregados em memória (${targetDir}): ${loadedItems.length}`);
   return loadedItems;
 }
 
