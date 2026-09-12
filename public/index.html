@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="default">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRAN Open Data Database Portal</title>
+  <meta name="description" content="Portal de Dados Abertos e API REST pública para bases de dados acadêmicas e científicas no Brasil - BRAN Org.">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/328064865?v=4" type="image/x-icon">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="/" class="brand-logo" id="brand-logo-link">
+        <img src="https://avatars.githubusercontent.com/u/328064865?v=4" alt="BRAN Org Logo">
+        <span>BRAN Org</span>
+        <span class="brand-tag">Open Data</span>
+      </a>
+
+      <div class="theme-selector">
+        <label for="theme-select" style="font-size: 0.8rem; color: var(--text-muted);">Tema:</label>
+        <select id="theme-select">
+          <option value="default">Glass Dark (Padrão)</option>
+          <option value="neon">Neon Cyberpunk</option>
+          <option value="minimalist">Apple Minimalist</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    
+    <!-- Hero Banner -->
+    <section class="hero-section">
+      <div class="hero-badge">
+        <span id="doi-badge">DOI: 10.5281/zenodo.0000000</span>
+        <span>•</span>
+        <span id="license-badge">Licença: Open Data</span>
+      </div>
+      
+      <h1 class="hero-title" id="hero-title">
+        BRAN Academic <span class="text-gradient">Database Template</span>
+      </h1>
+      
+      <p class="hero-subtitle" id="hero-subtitle">
+        Infraestrutura aberta de dados acadêmicos. Consulte metadados, visualize estatísticas e integre via API REST.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\'explorer\']').click()">
+          🔍 Explorar Dados
+        </button>
+        <button class="btn btn-secondary" onclick="document.querySelector('[data-tab=\'sandbox\']').click()">
+          ⚡ API Sandbox & Docs
+        </button>
+      </div>
+    </section>
+
+    <!-- Tabs Navigation -->
+    <nav class="tabs-navigation" aria-label="Navegação do Portal">
+      <button class="tab-btn active" data-tab="dashboard" id="tab-btn-dashboard">📊 Painel Estatístico</button>
+      <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔍 Explorador de Registros</button>
+      <button class="tab-btn" data-tab="sandbox" id="tab-btn-sandbox">💻 API & Sandbox</button>
+    </nav>
+
+    <!-- TAB 1: Painel Estatístico (Dashboard) -->
+    <section id="tab-dashboard" class="tab-content active">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total de Registros Catalogados</div>
+          <div class="metric-value text-gradient" id="stat-total-records">0</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Base de dados limpa e padronizada</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Adoção de Ferramentas / Softwares</div>
+          <div class="metric-value" id="stat-adoption-rate" style="color: var(--accent-emerald);">0%</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Publicações com softwares identificados</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Software Mais Utilizado</div>
+          <div class="metric-value" id="stat-top-tool" style="font-size: 1.6rem; color: var(--accent-secondary);">—</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Líder em frequência de citação</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2 class="chart-title">Top Ferramentas e Softwares</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-top-tools"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2 class="chart-title">Distribuição por Ano de Edição</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-year-distribution"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Explorador de Registros -->
+    <section id="tab-explorer" class="tab-content">
+      <div class="explorer-layout">
+        
+        <!-- Sidebar Filters -->
+        <aside class="sidebar-filters">
+          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">Filtros de Pesquisa</h2>
+          
+          <div class="filter-group">
+            <label for="search-input" class="filter-label">Busca Global</label>
+            <input type="text" id="search-input" class="filter-input" placeholder="Pesquisar por título, autor, resumo...">
+          </div>
+
+          <div id="dynamic-filters">
+            <!-- Filtros gerados dinamicamente via JS -->
+          </div>
+        </aside>
+
+        <!-- Data Table & Toolbar -->
+        <div class="data-table-container">
+          <div class="table-toolbar">
+            <div style="font-weight: 600; font-size: 0.95rem;">Registros Encontrados</div>
+            <div style="display: flex; gap: 8px;">
+              <a href="#" id="export-json-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" download>
+                📥 Exportar JSON
+              </a>
+              <a href="#" id="export-csv-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" download>
+                📊 Exportar CSV
+              </a>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>DOI / Identificador</th>
+                  <th>Título</th>
+                  <th>Ano</th>
+                  <th>Autores</th>
+                  <th>Ferramentas</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <!-- Linhas inseridas via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Footer -->
+          <div class="pagination">
+            <span id="pagination-info" style="font-size: 0.85rem; color: var(--text-secondary);">Exibindo 0 registros</span>
+            <div style="display: flex; gap: 8px;">
+              <button id="prev-page-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" disabled>Anterior</button>
+              <button id="next-page-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;">Próxima</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: API Sandbox & Docs -->
+    <section id="tab-sandbox" class="tab-content">
+      <div class="sandbox-card">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Documentação e Sandbox da API REST</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">
+          Esta API é aberta e pública. Não exige chave de autenticação para leitura de dados.
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <label for="sandbox-lang" style="font-weight: 600; font-size: 0.9rem;">Linguagem do Snippet:</label>
+          <select id="sandbox-lang" class="filter-select" style="width: auto; padding: 6px 14px;">
+            <option value="curl">cURL (Terminal)</option>
+            <option value="javascript">JavaScript (Fetch)</option>
+            <option value="python">Python (Requests)</option>
+          </select>
+        </div>
+
+        <div class="code-block-container">
+          <button class="copy-btn" id="sandbox-copy-btn">Copiar Código</button>
+          <pre><code id="sandbox-code">// Carregando snippet...</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        Desenvolvido pela <strong>BRAN Org</strong> — Infraestrutura Aberta para a Informação Acadêmica e Científica no Brasil.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.8rem;">
+        Alinhado aos Princípios <a href="https://www.go-fair.org/fair-principles/" target="_blank" style="color: var(--accent-primary);">FAIR</a> e à Declaração <a href="https://www.budapestopenaccessinitiative.org/" target="_blank" style="color: var(--accent-primary);">BOAI</a>.
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
