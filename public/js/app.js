@@ -438,7 +438,9 @@ function initChartExports() {
     btn.addEventListener('click', () => {
       const chartKey = btn.getAttribute('data-chart');
       if (chartInstances[chartKey]) {
-        chartInstances[chartKey].exportPNG(`grafico-${chartKey}.png`);
+        const cardHeader = btn.closest('.chart-card')?.querySelector('.chart-header h3 span');
+        const titleText = cardHeader ? cardHeader.textContent.trim() : 'Gráfico Estatístico';
+        chartInstances[chartKey].exportPNG(titleText, `grafico-${chartKey}.png`);
       }
     });
   });
