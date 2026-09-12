@@ -21,29 +21,28 @@
     "secondaryKey": "id"
   },
   "schema": {
-    "searchFields": ["title", "abstract", "authors", "keywords", "tools", "data_sources"],
+    "searchFields": ["title", "abstract", "authors", "keywords", "section", "issue"],
     "facets": [
       { "key": "year", "label": "Ano / Edição", "type": "number", "multi": true },
-      { "key": "author", "label": "Autor", "type": "string", "targetField": "authors" },
-      { "key": "tool", "label": "Ferramenta / Software", "type": "string", "targetField": "tools" },
-      { "key": "source", "label": "Fonte de Dados", "type": "string", "targetField": "data_sources" },
-      { "key": "stage", "label": "Etapa Metodológica", "type": "string", "targetField": "usage_stages" }
+      { "key": "author", "label": "Autor / Pesquisador", "type": "string", "targetField": "authors" },
+      { "key": "section", "label": "Eixo Temático / Seção", "type": "string", "targetField": "section" },
+      { "key": "keyword", "label": "Palavra-chave / Tópico", "type": "string", "targetField": "keywords" }
     ],
     "sortFields": [
+      { "key": "year", "label": "Ano / Edição" },
       { "key": "title", "label": "Título" },
-      { "key": "year", "label": "Ano" },
       { "key": "doi", "label": "DOI" }
     ]
   },
   "stats": {
     "topLists": [
-      { "key": "topTools", "label": "Principais Ferramentas / Softwares", "sourceField": "tools", "limit": 10 },
-      { "key": "topSources", "label": "Principais Fontes de Dados", "sourceField": "data_sources", "limit": 10 },
-      { "key": "topAuthors", "label": "Principais Autores", "sourceField": "authors", "limit": 10 }
+      { "key": "topAuthors", "label": "Principais Autores / Pesquisadores", "sourceField": "authors", "limit": 10 },
+      { "key": "topKeywords", "label": "Palavras-chave & Tópicos", "sourceField": "keywords", "limit": 10 },
+      { "key": "topSections", "label": "Eixos Temáticos / Seções", "sourceField": "section", "limit": 10 }
     ],
     "breakdowns": [
-      { "key": "yearDistribution", "label": "Distribuição por Ano", "sourceField": "year" },
-      { "key": "stageBreakdown", "label": "Etapas Metodológicas", "sourceField": "usage_stages" }
+      { "key": "yearDistribution", "label": "Distribuição por Ano / Edição", "sourceField": "year" },
+      { "key": "sectionBreakdown", "label": "Distribuição por Eixo Temático", "sourceField": "section" }
     ]
   }
 }

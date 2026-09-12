@@ -47,8 +47,8 @@ describe('Unit Tests - DataManager & StatsEngine', () => {
   test('calculateStats deve agregar métricas e top listas corretamente', () => {
     const stats = calculateStats();
     assert.ok(stats.totalRecords > 0);
-    assert.ok(stats.topLists.topTools);
-    assert.ok(Array.isArray(stats.topLists.topTools.data));
+    assert.ok(stats.topLists.topAuthors);
+    assert.ok(Array.isArray(stats.topLists.topAuthors.data));
   });
 
   test('calculateCooccurrenceMatrix deve calcular a matriz de coocorrência 2D 100% interna', () => {
