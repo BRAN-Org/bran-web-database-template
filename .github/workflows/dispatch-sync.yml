@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "🚀 Notificando repositórios derivados da BRAN Org sobre o merge na main..."
           # Lista de repositórios derivados da organização BRAN Org
-          REPOS=("BRAN-Org/EBBC-OpenData")
+          REPOS=("BRAN-Org/ebbc-open-database" "BRAN-Org/abec-open-database")
           
           for REPO in "${REPOS[@]}"; do
             echo "📡 Enviando sinal de atualização para: $REPO"
