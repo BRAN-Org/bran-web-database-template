@@ -1,6 +1,8 @@
 name: Sync Template Updates from BRAN Org
 
 on:
+  repository_dispatch:
+    types: [template_updated] # Disparado instantaneamente ao fazer merge na main do template
   schedule:
     - cron: '0 0 * * 1' # Executa semanalmente (Toda segunda-feira)
   workflow_dispatch: # Permite disparo manual pelo painel do GitHub Actions
