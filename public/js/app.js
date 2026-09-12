@@ -363,9 +363,27 @@ function openArticleModal(item) {
       : 'N/A';
   }
 
+  const realArticleUrl = item.url || item.article_url || item.link || item.original_url || (item.doi ? (item.doi.startsWith('http') ? item.doi : `https://doi.org/${item.doi}`) : null);
+
   const doiLink = document.getElementById('modal-doi-link');
-  if (doiLink && item.doi) {
-    doiLink.href = item.doi.startsWith('http') ? item.doi : `https://doi.org/${item.doi}`;
+  if (doiLink) {
+    if (realArticleUrl) {
+      doiLink.href = realArticleUrl;
+      doiLink.style.display = 'inline-block';
+      doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Artigo Original`;
+    } else {
+      doiLink.style.display = 'none';
+    }
+  }
+
+  const pdfLink = document.getElementById('modal-pdf-link');
+  if (pdfLink) {
+    if (item.pdf_url) {
+      pdfLink.href = item.pdf_url;
+      pdfLink.style.display = 'inline-block';
+    } else {
+      pdfLink.style.display = 'none';
+    }
   }
 
   updateCitationBox();
