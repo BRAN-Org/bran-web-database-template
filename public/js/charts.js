@@ -39,10 +39,20 @@ export class SimpleChart {
   setupCanvas() {
     const dpr = window.devicePixelRatio || 1;
     const rect = this.canvas.getBoundingClientRect();
-    this.canvas.width = rect.width * dpr;
-    this.canvas.height = rect.height * dpr;
+    const parent = this.canvas.parentElement;
+
+    let width = rect.width;
+    let height = rect.height;
+
+    if (!width || width === 0) width = parent ? parent.clientWidth : 400;
+    if (!height || height === 0) height = parent ? parent.clientHeight : 260;
+    if (!width || width === 0) width = 400;
+    if (!height || height === 0) height = 260;
+
+    this.canvas.width = width * dpr;
+    this.canvas.height = height * dpr;
     this.ctx.scale(dpr, dpr);
-    return { width: rect.width, height: rect.height };
+    return { width, height };
   }
 
   render(data, labelKey = 'name', valueKey = 'count') {
@@ -69,7 +79,7 @@ export class SimpleChart {
     const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
     const barHeight = Math.min(26, (height - 20) / items.length - 6);
     const startX = 140;
-    const chartWidth = width - startX - 45;
+    const chartWidth = Math.max(width - startX - 45, 50);
 
     items.forEach((item, index) => {
       const label = item[labelKey] || item.name || '';
@@ -113,8 +123,8 @@ export class SimpleChart {
 
     const colors = this.getPaletteColors();
     const padding = 40;
-    const chartW = width - padding * 2;
-    const chartH = height - padding * 2;
+    const chartW = Math.max(width - padding * 2, 50);
+    const chartH = Math.max(height - padding * 2, 50);
     const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
 
     ctx.beginPath();
@@ -158,7 +168,7 @@ export class SimpleChart {
     const colors = this.getPaletteColors();
     const centerX = width / 2;
     const centerY = height / 2;
-    const radius = Math.min(centerX, centerY) - 35;
+    const radius = Math.max(Math.min(centerX, centerY) - 35, 20);
     const total = items.length;
     const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
 
@@ -220,8 +230,8 @@ export class SimpleChart {
     const paddingTop = 30;
     const paddingBottom = 40;
 
-    const chartW = width - paddingLeft - paddingRight;
-    const chartH = height - paddingTop - paddingBottom;
+    const chartW = Math.max(width - paddingLeft - paddingRight, 50);
+    const chartH = Math.max(height - paddingTop - paddingBottom, 50);
     const maxVal = Math.max(...items.map(d => d.count), 1);
 
     const barW = (chartW / items.length) * 0.55;
@@ -249,11 +259,9 @@ export class SimpleChart {
     ctx.strokeStyle = '#fe257f';
     ctx.lineWidth = 2.5;
 
-    const linePoints = [];
     items.forEach((item, i) => {
       const x = paddingLeft + (i / items.length) * chartW + (chartW / items.length) / 2;
       const y = height - paddingBottom - (item.cumulativePercentage / 100) * chartH;
-      linePoints.push({ x, y, pct: item.cumulativePercentage });
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });
@@ -289,11 +297,10 @@ export class SimpleChart {
     const paddingTop = 30;
     const paddingBottom = 40;
 
-    const chartW = width - paddingLeft - paddingRight;
-    const chartH = height - paddingTop - paddingBottom;
+    const chartW = Math.max(width - paddingLeft - paddingRight, 50);
+    const chartH = Math.max(height - paddingTop - paddingBottom, 50);
     const colors = this.getPaletteColors();
 
-    // Calculate max sum per year
     const yearlyTotals = years.map((_, yIdx) => {
       return series.reduce((sum, s) => sum + (s.data[yIdx] || 0), 0);
     });
@@ -382,8 +389,8 @@ export class SimpleChart {
     ctx.clearRect(0, 0, width, height);
 
     const padding = 45;
-    const chartW = width - padding * 2;
-    const chartH = height - padding * 2;
+    const chartW = Math.max(width - padding * 2, 50);
+    const chartH = Math.max(height - padding * 2, 50);
     const points = data.points;
     if (points.length === 0) return;
 
@@ -410,7 +417,6 @@ export class SimpleChart {
       ctx.stroke();
     });
 
-    // Draw Trendline if available
     if (data.slope !== undefined && data.intercept !== undefined) {
       const x1 = 0;
       const y1 = data.intercept;

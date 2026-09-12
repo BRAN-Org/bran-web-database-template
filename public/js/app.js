@@ -555,6 +555,17 @@ function switchTab(tabId) {
       p.classList.remove('active');
     }
   });
+
+  // Renderizar canvas ao alternar de aba para garantir dimensões corretas
+  if (tabId === 'dashboard-tab' || tabId === 'home-tab') {
+    setTimeout(() => {
+      updateAllCharts();
+    }, 50);
+  } else if (tabId === 'correlations-tab') {
+    setTimeout(() => {
+      loadCorrelations();
+    }, 50);
+  }
 }
 
 function initTabs() {
