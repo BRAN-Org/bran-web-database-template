@@ -1,25 +1,29 @@
 import { readFileSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const CONFIG_PATH = join(__dirname, '../config/dataset.config.json');
+const DEFAULT_CONFIG_PATH = join(__dirname, '../config/dataset.config.json');
 
 let cachedConfig = null;
 
 export function getDatasetConfig() {
   if (cachedConfig) return cachedConfig;
 
+  const targetPath = process.env.CONFIG_PATH
+    ? (isAbsolute(process.env.CONFIG_PATH) ? process.env.CONFIG_PATH : join(process.cwd(), process.env.CONFIG_PATH))
+    : DEFAULT_CONFIG_PATH;
+
   try {
-    if (existsSync(CONFIG_PATH)) {
-      const rawData = readFileSync(CONFIG_PATH, 'utf-8');
+    if (existsSync(targetPath)) {
+      const rawData = readFileSync(targetPath, 'utf-8');
       cachedConfig = JSON.parse(rawData);
       return cachedConfig;
     }
   } catch (err) {
-    console.error('⚠️ [BRAN Template] Falha ao carregar dataset.config.json:', err.message);
+    console.error('⚠️ [BRAN Template] Falha ao carregar arquivo de configuração:', err.message);
   }
 
   // Fallback padrão se arquivo não for encontrado
