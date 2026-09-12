@@ -4,7 +4,8 @@
   <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
   <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
   <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
-  <img src="https://img.shields.io/badge/Node.js-v18%2B-brightgreen?style=for-the-badge&logo=nodedotjs" alt="Node.js">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY 4.0"></a>
 </p>
 
 Template leve, modular e reproduzível para criação de **APIs REST públicas** e **Dashboards Interativos** para bases de dados acadêmicas e científicas brasileiras no ecossistema da **[BRAN Org](https://github.com/BRAN-Org)** (inspirado na arquitetura do [EBBC-OpenData](https://github.com/GabrielBaiano/EBBC-OpenData)).
@@ -155,7 +156,9 @@ Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizad
 Este template foi construído em conformidade com as diretrizes internacionais de Ciência Aberta:
 - **[Princípios FAIR](https://www.go-fair.org/fair-principles/)**: Dados *Findable, Accessible, Interoperable, Reusable*.
 - **[BOAI](https://www.budapestopenaccessinitiative.org/)**: Livre acesso e reutilização do conhecimento acadêmico.
-- **Licença**: A licença do software e do dataset pode ser definida individualmente em `config/dataset.config.json`.
+- **Licenciamento Duplo**:
+  - **Código-fonte & Engine**: [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html) — Garante Ciência Aberta e código livre livre de fechamentos proprietários.
+  - **Dataset Científico & Metadados (`data/`)**: [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) — Permite uso, distribuição, análises bibliométricas e treino de IA mediante atribuição de créditos.
 
 ---
 

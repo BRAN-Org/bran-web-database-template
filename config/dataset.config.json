@@ -13,7 +13,7 @@
     "description": "Infraestrutura aberta de dados acadêmicos e científicos. Este portal disponibiliza acervos públicos de anais, edições e periódicos em formatos limpos e padronizados, com API REST pública e ferramentas para análise cientométrica e bibliométrica no Brasil.",
     "version": "1.0.0",
     "doi": "10.5281/zenodo.0000000",
-    "license": "A ser definida (Configurável)",
+    "license": "Code: GNU GPLv3 | Data: CC BY 4.0 (Creative Commons Attribution 4.0)",
     "entityName": "articles",
     "singularName": "Artigo",
     "pluralName": "Artigos",
