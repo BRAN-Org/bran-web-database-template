@@ -239,6 +239,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-calendar-days"></i> <span>Publicações por Edição (Histórico)</span></h3>
+              <button class="btn-chart-export" data-chart="years" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-years"></canvas>
@@ -248,6 +249,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-screwdriver-wrench"></i> <span>Top Softwares & Ferramentas</span></h3>
+              <button class="btn-chart-export" data-chart="tools" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-tools"></canvas>
@@ -257,6 +259,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-cloud-arrow-down"></i> <span>Principais Fontes de Coleta de Dados</span></h3>
+              <button class="btn-chart-export" data-chart="sources" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-sources"></canvas>
@@ -266,6 +269,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-arrows-split-up-and-left"></i> <span>Etapas de Uso Metodológico</span></h3>
+              <button class="btn-chart-export" data-chart="stages" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-stages"></canvas>
@@ -275,6 +279,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-chart-line"></i> <span>Curva de Pareto 80/20 (Adoção de Software)</span></h3>
+              <button class="btn-chart-export" data-chart="pareto" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-pareto"></canvas>
@@ -284,6 +289,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-layer-group"></i> <span>Evolução Temporal Empilhada de Ferramentas</span></h3>
+              <button class="btn-chart-export" data-chart="temporal" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-temporal"></canvas>
@@ -298,91 +304,88 @@
           
           <!-- Sidebar Filters -->
           <div class="filters-sidebar glass-panel">
-            <div class="sidebar-header">
-              <h3><i class="fa-solid fa-filter"></i> <span>Filtros de Busca</span></h3>
-              <button id="btn-clear-filters" class="btn-clear">Limpar</button>
-            </div>
-            
-            <div class="filter-group">
-              <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> <span>Busca Textual</span></label>
-              <input type="text" id="search-input" class="filter-input" placeholder="Título, autor, resumo, palavra-chave...">
+            <div class="filter-group-header">
+              <i class="fa-solid fa-filter"></i> <span>Filtros Cientométricos</span>
+              <button class="btn-clear" id="btn-clear-filters" title="Limpar Filtros"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
 
-            <div class="filter-group">
-              <label><i class="fa-solid fa-calendar"></i> <span>Edições / Anos</span></label>
+            <div class="filter-section">
+              <label><i class="fa-solid fa-magnifying-glass"></i> Busca Textual Global</label>
+              <input type="text" id="search-input" class="filter-input" placeholder="Título, resumo, autor...">
+            </div>
+
+            <div class="filter-section">
+              <label><i class="fa-solid fa-calendar"></i> Edições do Evento (Ano)</label>
               <div class="checkbox-group" id="year-checkbox-list">
-                <!-- Checkboxes populadas via JS -->
+                <!-- Populado via JS -->
               </div>
             </div>
 
-            <div class="filter-group">
-              <label for="filter-tool"><i class="fa-solid fa-screwdriver-wrench"></i> <span>Ferramenta / Software</span></label>
+            <div class="filter-section">
+              <label><i class="fa-solid fa-screwdriver-wrench"></i> Ferramenta / Software</label>
               <select id="filter-tool" class="filter-select">
                 <option value="">Todas as ferramentas</option>
               </select>
             </div>
 
-            <div class="filter-group">
-              <label for="filter-source"><i class="fa-solid fa-database"></i> <span>Fonte de Dados</span></label>
+            <div class="filter-section">
+              <label><i class="fa-solid fa-database"></i> Fonte de Dados</label>
               <select id="filter-source" class="filter-select">
                 <option value="">Todas as fontes</option>
               </select>
             </div>
 
-            <div class="filter-group">
-              <label for="filter-stage"><i class="fa-solid fa-arrows-split-up-and-left"></i> <span>Etapa Metodológica</span></label>
+            <div class="filter-section">
+              <label><i class="fa-solid fa-arrows-split-up-and-left"></i> Etapa Metodológica</label>
               <select id="filter-stage" class="filter-select">
-                <option value="">Qualquer etapa</option>
-                <option value="coleta de dados">Coleta de Dados</option>
-                <option value="análise dos dados">Análise de Dados</option>
-                <option value="visualização">Visualização de Dados</option>
+                <option value="">Todas as etapas</option>
+                <option value="coleta dos dados">Coleta dos Dados</option>
+                <option value="tratamanto">Tratamento dos Dados</option>
+                <option value="organização dos dados">Organização dos Dados</option>
+                <option value="análise dos dados">Análise dos Dados</option>
+                <option value="visualização - geração dos graficos">Visualização / Gráficos</option>
               </select>
             </div>
 
-            <div class="filter-group">
+            <div class="filter-section">
               <label class="checkbox-item">
                 <input type="checkbox" id="filter-has-tool">
-                <span>Apenas artigos com software</span>
+                <span>Apenas com Software Identificado</span>
               </label>
             </div>
 
-            <div class="filter-group">
-              <label for="sort-select"><i class="fa-solid fa-sort"></i> <span>Ordenar por</span></label>
-              <div class="sort-controls">
-                <select id="sort-select" class="filter-select">
-                  <option value="title">Título</option>
-                  <option value="year">Ano de Edição</option>
-                  <option value="doi">DOI</option>
-                </select>
-                <button id="btn-sort-dir" class="btn-icon" title="Alternar Ordem">
-                  <i class="fa-solid fa-sort-amount-down"></i>
-                </button>
-              </div>
-            </div>
-            
-            <div class="export-actions">
-              <h4><i class="fa-solid fa-download"></i> Exportar Resultados</h4>
-              <div class="btn-row">
-                <a href="#" id="btn-export-csv" class="btn btn-secondary btn-sm" download>
-                  <i class="fa-solid fa-file-csv"></i> CSV (BOM)
-                </a>
-                <a href="#" id="btn-export-json" class="btn btn-secondary btn-sm" download>
-                  <i class="fa-solid fa-file-code"></i> JSON
-                </a>
+            <div class="filter-section" style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+              <label><i class="fa-solid fa-download"></i> Exportar Dados Filtrados</label>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+                <a href="/api/v1/articles/export?format=json" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-json" style="flex:1; text-align:center; text-decoration:none;">JSON</a>
+                <a href="/api/v1/articles/export?format=csv" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-csv" style="flex:1; text-align:center; text-decoration:none;">CSV</a>
               </div>
             </div>
           </div>
 
-          <!-- Results Cards List -->
-          <div class="results-container">
-            <div class="results-header">
-              <div class="results-count">
-                Mostrando <span id="displayed-count">0</span> de <span id="filtered-count">0</span> artigos
+          <!-- Main Results Table / Cards -->
+          <div class="explorer-results">
+            <!-- Controls Bar -->
+            <div class="results-toolbar glass-panel">
+              <div class="toolbar-left">
+                <label for="sort-select"><i class="fa-solid fa-arrow-down-short-wide"></i> Ordenar:</label>
+                <select id="sort-select" class="filter-select">
+                  <option value="year">Ano de Edição</option>
+                  <option value="title">Título do Artigo</option>
+                  <option value="doi">DOI / ID</option>
+                </select>
+                <button class="btn-icon" id="btn-sort-dir" title="Inverter Ordem"><i class="fa-solid fa-sort-amount-down"></i></button>
               </div>
-              <div class="pagination-controls">
-                <button id="btn-prev" class="btn-icon" disabled><i class="fa-solid fa-chevron-left"></i></button>
-                <span id="page-indicator">Pág. 1 de 1</span>
-                <button id="btn-next" class="btn-icon" disabled><i class="fa-solid fa-chevron-right"></i></button>
+
+              <div class="toolbar-right">
+                <span class="results-count-text">
+                  Mostrando <span id="displayed-count">0</span> de <span id="filtered-count">0</span> artigos
+                </span>
+                <div class="pagination-controls">
+                  <button id="btn-prev" class="btn-icon" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                  <span id="page-indicator">Pág. 1 de 1</span>
+                  <button id="btn-next" class="btn-icon" disabled><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
               </div>
             </div>
 
@@ -401,6 +404,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-table-cells"></i> <span>Matriz de Coocorrência (Softwares × Fontes)</span></h3>
+              <button class="btn-chart-export" data-chart="heatmap" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-heatmap-matrix"></canvas>
@@ -410,6 +414,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-chart-line"></i> <span>Dispersão: Autores × Diversidade Metodológica</span></h3>
+              <button class="btn-chart-export" data-chart="scatter" title="Exportar como Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
             </div>
             <div class="chart-container">
               <canvas id="chart-scatter-plot"></canvas>
@@ -420,24 +425,152 @@
 
       <!-- 4. DOCS & API SANDBOX TAB -->
       <section id="docs-tab" class="tab-panel">
-        <div class="sandbox-card glass-panel">
-          <h2>Documentação e Sandbox da API REST</h2>
-          <p class="sandbox-desc">
-            Testador interativo de chamadas de API com gerador de código em tempo real para integração em scripts.
-          </p>
+        <div class="sandbox-card glass-panel" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2><i class="fa-solid fa-terminal"></i> Interactive REST API Playground</h2>
+              <p class="sandbox-desc">
+                Execute chamadas HTTP diretamente pelo navegador, meça o tempo de resposta em milissegundos e obtenha o payload JSON em tempo real.
+              </p>
+            </div>
+            <div id="playground-status-badge" class="playground-status">
+              <i class="fa-solid fa-circle-check"></i> HTTP 200 OK (0ms)
+            </div>
+          </div>
 
-          <div class="sandbox-controls">
-            <label for="sandbox-lang">Linguagem:</label>
-            <select id="sandbox-lang" class="filter-select">
-              <option value="curl">cURL (Terminal)</option>
-              <option value="javascript">JavaScript (Fetch API)</option>
-              <option value="python">Python (Requests)</option>
-            </select>
+          <div class="sandbox-controls" style="margin-top: 1.25rem;">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; width: 100%;">
+              <span class="badge-method get">GET</span>
+              <select id="playground-endpoint-select" class="filter-select" style="font-family: var(--font-mono); font-weight: 600; flex: 1; min-width: 260px;">
+                <option value="/api/v1/articles?limit=5">GET /api/v1/articles?limit=5 (Listagem Paginada)</option>
+                <option value="/api/v1/articles/stats">GET /api/v1/articles/stats (Estatísticas Consolidadas)</option>
+                <option value="/api/v1/articles/stats/correlations">GET /api/v1/articles/stats/correlations (Matriz Coocorrência)</option>
+                <option value="/api/v1/articles/stats/scatter">GET /api/v1/articles/stats/scatter (Dispersão Metodológica)</option>
+                <option value="/api/v1/articles/stats/temporal">GET /api/v1/articles/stats/temporal (Distribuição Temporal)</option>
+                <option value="/api/v1/articles/stats/pareto">GET /api/v1/articles/stats/pareto (Análise Bradford / Pareto)</option>
+                <option value="/api/v1/config">GET /api/v1/config (Configuração do Dataset)</option>
+              </select>
+              <button class="btn btn-primary" id="btn-execute-api">
+                <i class="fa-solid fa-play"></i> Executar Requisição
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; margin-bottom: 0.5rem;">
+            <div class="sandbox-controls" style="margin: 0;">
+              <label for="sandbox-lang">Gerar Snippet em:</label>
+              <select id="sandbox-lang" class="filter-select">
+                <option value="curl">cURL (Terminal / Shell)</option>
+                <option value="javascript">JavaScript (Fetch API)</option>
+                <option value="python">Python (Requests / Pandas)</option>
+                <option value="node">Node.js (Axios)</option>
+                <option value="r">R (httr & jsonlite)</option>
+              </select>
+            </div>
+            <button class="copy-btn" id="sandbox-copy-btn"><i class="fa-regular fa-copy"></i> Copiar Código</button>
           </div>
 
           <div class="code-box">
-            <button class="copy-btn" id="sandbox-copy-btn"><i class="fa-regular fa-copy"></i> Copiar Código</button>
-            <pre><code id="sandbox-code">// Carregando código de demonstração...</code></pre>
+            <pre><code id="sandbox-code">// Clique em 'Executar Requisição' para carregar a resposta JSON...</code></pre>
+          </div>
+        </div>
+
+        <!-- Documentação Detalhada com Menu Lateral -->
+        <div class="docs-layout">
+          <div class="docs-sidebar glass-panel">
+            <h3><i class="fa-solid fa-book-bookmark"></i> Endpoints & Guias</h3>
+            <ul class="docs-menu-list">
+              <li><a href="#" class="docs-menu-link active" data-doc="doc-articles"><span class="badge-method get">GET</span> <span>/articles</span></a></li>
+              <li><a href="#" class="docs-menu-link" data-doc="doc-article-key"><span class="badge-method get">GET</span> <span>/articles/:key</span></a></li>
+              <li><a href="#" class="docs-menu-link" data-doc="doc-stats"><span class="badge-method get">GET</span> <span>/articles/stats</span></a></li>
+              <li><a href="#" class="docs-menu-link" data-doc="doc-correlations"><span class="badge-method get">GET</span> <span>/stats/correlations</span></a></li>
+              <li><a href="#" class="docs-menu-link" data-doc="doc-export"><span class="badge-method get">GET</span> <span>/export</span></a></li>
+              <li><a href="#" class="docs-menu-link" data-doc="doc-config"><span class="badge-method get">GET</span> <span>/config</span></a></li>
+            </ul>
+          </div>
+
+          <div class="docs-main-container">
+            <!-- Doc 1: Articles List -->
+            <div class="doc-card glass-panel active" id="doc-articles">
+              <div class="endpoint-header">
+                <span class="badge-method get">GET</span>
+                <span class="endpoint-path">/api/v1/articles</span>
+              </div>
+              <p class="doc-intro">Retorna a lista paginada de artigos com suporte a múltiplos filtros cientométricos, ordenação flexível e busca textual global.</p>
+              
+              <h4>Parâmetros de Query String</h4>
+              <table class="doc-table" style="width: 100%; font-size: 0.8rem; border-collapse: collapse; margin-top: 0.5rem;">
+                <thead>
+                  <tr style="text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                    <th style="padding: 0.5rem;">Parâmetro</th>
+                    <th style="padding: 0.5rem;">Tipo</th>
+                    <th style="padding: 0.5rem;">Descrição</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 0.5rem; font-family: var(--font-mono); color: #3064ff;">search</td>
+                    <td style="padding: 0.5rem; font-family: var(--font-mono);">string</td>
+                    <td style="padding: 0.5rem;">Busca textual sem diferenciação de acentos em títulos, resumos e autores.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 0.5rem; font-family: var(--font-mono); color: #3064ff;">year</td>
+                    <td style="padding: 0.5rem; font-family: var(--font-mono);">string</td>
+                    <td style="padding: 0.5rem;">Filtra edições específicas separadas por vírgula (ex: <code>2022,2024</code>).</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 0.5rem; font-family: var(--font-mono); color: #3064ff;">tool</td>
+                    <td style="padding: 0.5rem; font-family: var(--font-mono);">string</td>
+                    <td style="padding: 0.5rem;">Filtra pesquisas que utilizaram o software especificado (ex: <code>VOSviewer</code>).</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Doc 2: Article By Key -->
+            <div class="doc-card glass-panel" id="doc-article-key">
+              <div class="endpoint-header">
+                <span class="badge-method get">GET</span>
+                <span class="endpoint-path">/api/v1/articles/:key</span>
+              </div>
+              <p class="doc-intro">Busca individual por DOI ou identificador primário do registro (ex: <code>10.5281/zenodo.123456</code>).</p>
+            </div>
+
+            <!-- Doc 3: Stats -->
+            <div class="doc-card glass-panel" id="doc-stats">
+              <div class="endpoint-header">
+                <span class="badge-method get">GET</span>
+                <span class="endpoint-path">/api/v1/articles/stats</span>
+              </div>
+              <p class="doc-intro">Retorna agregados consolidados, taxas de adoção de software, top 10 ferramentas/fontes e distribuições históricas.</p>
+            </div>
+
+            <!-- Doc 4: Correlations -->
+            <div class="doc-card glass-panel" id="doc-correlations">
+              <div class="endpoint-header">
+                <span class="badge-method get">GET</span>
+                <span class="endpoint-path">/api/v1/articles/stats/correlations</span>
+              </div>
+              <p class="doc-intro">Calcula a Matriz de Coocorrência 2D em tempo real entre ferramentas de software e fontes de coleta de dados.</p>
+            </div>
+
+            <!-- Doc 5: Export -->
+            <div class="doc-card glass-panel" id="doc-export">
+              <div class="endpoint-header">
+                <span class="badge-method get">GET</span>
+                <span class="endpoint-path">/api/v1/articles/export</span>
+              </div>
+              <p class="doc-intro">Exporta o dataset completo ou filtrado em formato <code>JSON</code> ou <code>CSV</code> com suporte a streaming e BOM UTF-8.</p>
+            </div>
+
+            <!-- Doc 6: Config -->
+            <div class="doc-card glass-panel" id="doc-config">
+              <div class="endpoint-header">
+                <span class="badge-method get">GET</span>
+                <span class="endpoint-path">/api/v1/config</span>
+              </div>
+              <p class="doc-intro">Retorna a configuração pública do dataset, metadados da instituição, facetas e esquemas de busca.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -448,7 +581,7 @@
     <footer class="site-footer">
       <div class="footer-container">
         <div class="footer-left">
-          &copy; 2026 <strong id="footer-org-name">BRAN Org</strong> &bull; <span id="footer-inst-name">Faculdade / Periódico / Evento Científico</span>
+          &copy; 2026 <strong id="footer-org-name">Acervo de Dados Abertos</strong> <span id="footer-inst-name"></span>
         </div>
         <div class="footer-right">
           <a href="https://github.com/BRAN-Org/bran-web-database-template/issues" target="_blank" id="footer-issues-link">
@@ -488,6 +621,20 @@
       <div class="modal-section">
         <h4>Fontes de Coleta de Dados</h4>
         <div id="modal-sources" class="badge-list">N/A</div>
+      </div>
+
+      <!-- Gerador de Citações Científicas -->
+      <div class="modal-section citation-section">
+        <h4><i class="fa-solid fa-quote-left"></i> Citar este Trabalho</h4>
+        <div class="citation-tabs">
+          <button class="citation-tab active" data-fmt="bibtex">BibTeX</button>
+          <button class="citation-tab" data-fmt="apa">APA 7th</button>
+          <button class="citation-tab" data-fmt="abnt">ABNT</button>
+        </div>
+        <div class="citation-box">
+          <button class="copy-btn" id="btn-copy-citation"><i class="fa-regular fa-copy"></i> Copiar Citação</button>
+          <pre><code id="citation-content"></code></pre>
+        </div>
       </div>
 
       <div class="modal-section" style="margin-top: 24px;">

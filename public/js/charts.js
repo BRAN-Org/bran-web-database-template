@@ -454,6 +454,14 @@ export class SimpleChart {
     }
   }
 
+  exportPNG(filename = 'grafico-estatistico.png') {
+    if (!this.canvas) return;
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = this.canvas.toDataURL('image/png');
+    link.click();
+  }
+
   drawRoundedRect(x, y, w, h, r) {
     if (w < 2 * r) r = w / 2;
     if (h < 2 * r) r = h / 2;

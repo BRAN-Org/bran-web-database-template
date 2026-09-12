@@ -367,9 +367,15 @@ function renderArticleCards(items) {
     card.addEventListener('click', () => openArticleModal(item));
     container.appendChild(card);
   });
-}
+  // Initialize export buttons
+  initChartExports();
+});
+
+let currentModalItem = null;
+let currentCitationFmt = 'bibtex';
 
 function openArticleModal(item) {
+  currentModalItem = item;
   const modal = document.getElementById('article-modal');
   if (!modal) return;
 
@@ -397,7 +403,35 @@ function openArticleModal(item) {
     doiLink.href = item.doi.startsWith('http') ? item.doi : `https://doi.org/${item.doi}`;
   }
 
+  updateCitationBox();
   modal.classList.add('active');
+}
+
+function updateCitationBox() {
+  if (!currentModalItem) return;
+  const item = currentModalItem;
+  const citationEl = document.getElementById('citation-content');
+  if (!citationEl) return;
+
+  const authors = Array.isArray(item.authors) ? item.authors : (item.authors ? [item.authors] : ['Autor Desconhecido']);
+  const year = item.year || '2024';
+  const title = item.title || 'Sem título';
+  const doi = item.doi || item.id || '';
+  const doiUrl = doi.startsWith('http') ? doi : `https://doi.org/${doi}`;
+  const doiKey = doi.replace(/[^a-zA-Z0-9]/g, '_');
+
+  if (currentCitationFmt === 'bibtex') {
+    citationEl.textContent = `@article{${doiKey || 'ebbc_' + year},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}},\n  publisher = {EBBC OpenData},\n  url       = {${doiUrl}}\n}`;
+  } else if (currentCitationFmt === 'apa') {
+    citationEl.textContent = `${authors.join(', ')} (${year}). ${title}. EBBC OpenData. ${doiUrl}`;
+  } else if (currentCitationFmt === 'abnt') {
+    const abntAuthors = authors.map(a => {
+      const parts = a.trim().split(' ');
+      const last = parts.pop().toUpperCase();
+      return `${last}, ${parts.join(' ')}`;
+    }).join('; ');
+    citationEl.textContent = `${abntAuthors}. ${title}. EBBC OpenData, ${year}. Disponível em: <${doiUrl}>.`;
+  }
 }
 
 function initModal() {
@@ -410,6 +444,39 @@ function initModal() {
       if (e.target === modal) modal.classList.remove('active');
     });
   }
+
+  // Citation format tabs
+  document.querySelectorAll('.citation-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.citation-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentCitationFmt = tab.getAttribute('data-fmt');
+      updateCitationBox();
+    });
+  });
+
+  const copyCitationBtn = document.getElementById('btn-copy-citation');
+  if (copyCitationBtn) {
+    copyCitationBtn.addEventListener('click', () => {
+      const citationEl = document.getElementById('citation-content');
+      if (citationEl) {
+        navigator.clipboard.writeText(citationEl.textContent);
+        copyCitationBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+        setTimeout(() => copyCitationBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar Citação', 2000);
+      }
+    });
+  }
+}
+
+function initChartExports() {
+  document.querySelectorAll('.btn-chart-export').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const chartKey = btn.getAttribute('data-chart');
+      if (chartInstances[chartKey]) {
+        chartInstances[chartKey].exportPNG(`grafico-${chartKey}.png`);
+      }
+    });
+  });
 }
 
 function renderPaginationInfo(data) {
@@ -477,17 +544,60 @@ async function loadCorrelations() {
     const matrixData = await resMatrix.json();
     const heatmapChart = new SimpleChart('chart-heatmap-matrix');
     heatmapChart.renderHeatmapMatrix(matrixData);
+    chartInstances['heatmap'] = heatmapChart;
 
     const resScatter = await fetch(`/api/v1/${entity}/stats/scatter`);
     const scatterData = await resScatter.json();
     const scatterChart = new SimpleChart('chart-scatter-plot');
     scatterChart.renderScatterPlot(scatterData);
+    chartInstances['scatter'] = scatterChart;
   } catch (err) {
     console.error('⚠️ Erro ao carregar correlações:', err);
   }
 }
 
 function initSandbox() {
+  const executeBtn = document.getElementById('btn-execute-api');
+  const endpointSelect = document.getElementById('playground-endpoint-select');
+  const badgeEl = document.getElementById('playground-status-badge');
+  const codeEl = document.getElementById('sandbox-code');
+
+  if (executeBtn && endpointSelect) {
+    executeBtn.addEventListener('click', async () => {
+      const path = endpointSelect.value;
+      const t0 = performance.now();
+      executeBtn.disabled = true;
+      executeBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Executando...';
+
+      try {
+        const res = await fetch(path);
+        const t1 = performance.now();
+        const latency = Math.round(t1 - t0);
+        const data = await res.json();
+
+        if (badgeEl) {
+          badgeEl.className = 'playground-status';
+          badgeEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> HTTP ${res.status} OK (${latency}ms)`;
+        }
+
+        if (codeEl) {
+          codeEl.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        if (badgeEl) {
+          badgeEl.className = 'playground-status error';
+          badgeEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Erro na Requisição`;
+        }
+        if (codeEl) {
+          codeEl.textContent = `// Erro ao conectar à API:\n${err.message}`;
+        }
+      } finally {
+        executeBtn.disabled = false;
+        executeBtn.innerHTML = '<i class="fa-solid fa-play"></i> Executar Requisição';
+      }
+    });
+  }
+
   const langSelect = document.getElementById('sandbox-lang');
   if (langSelect) {
     langSelect.addEventListener('change', updateSandboxCode);
@@ -496,9 +606,9 @@ function initSandbox() {
   const copyBtn = document.getElementById('sandbox-copy-btn');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
-      const codeEl = document.getElementById('sandbox-code');
-      if (codeEl) {
-        navigator.clipboard.writeText(codeEl.textContent);
+      const textToCopy = codeEl ? codeEl.textContent : '';
+      if (textToCopy) {
+        navigator.clipboard.writeText(textToCopy);
         copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
         setTimeout(() => copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar Código', 2000);
       }
@@ -566,7 +676,6 @@ function switchTab(tabId) {
     }
   });
 
-  // Renderizar canvas ao alternar de aba para garantir dimensões corretas
   if (tabId === 'dashboard-tab' || tabId === 'home-tab') {
     setTimeout(() => {
       updateAllCharts();
@@ -587,7 +696,6 @@ function initTabs() {
     });
   });
 
-  // Hero section buttons
   const btnHeroExplore = document.getElementById('btn-hero-explore');
   if (btnHeroExplore) {
     btnHeroExplore.addEventListener('click', () => switchTab('explorer-tab'));
@@ -598,7 +706,6 @@ function initTabs() {
     btnHeroStats.addEventListener('click', () => switchTab('dashboard-tab'));
   }
 
-  // Top Search Input Integration
   const topSearchInput = document.getElementById('top-quick-search');
   const searchInput = document.getElementById('search-input');
 
