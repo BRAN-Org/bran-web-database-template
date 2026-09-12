@@ -367,9 +367,8 @@ function renderArticleCards(items) {
     card.addEventListener('click', () => openArticleModal(item));
     container.appendChild(card);
   });
-  // Initialize export buttons
   initChartExports();
-});
+}
 
 let currentModalItem = null;
 let currentCitationFmt = 'bibtex';
