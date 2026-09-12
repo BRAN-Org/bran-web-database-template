@@ -2,6 +2,8 @@
   {
     "id": "item-001",
     "doi": "https://doi.org/10.5281/zenodo.1000001",
+    "url": "https://doi.org/10.5281/zenodo.1000001",
+    "pdf_url": "https://zenodo.org/records/1000001/files/artigo.pdf",
     "year": 2024,
     "title": "Mapeamento Bibliométrico da Produção Científica Brasileira em IA",
     "authors": ["Gabriel Nascimento Gama", "Maria Silva", "João Santos"],
@@ -15,6 +17,8 @@
   {
     "id": "item-002",
     "doi": "https://doi.org/10.5281/zenodo.1000002",
+    "url": "https://doi.org/10.5281/zenodo.1000002",
+    "pdf_url": "https://zenodo.org/records/1000002/files/artigo.pdf",
     "year": 2024,
     "title": "Análise de Redes de Coautoria na Cientometria Nacional",
     "authors": ["Ana Oliveira", "Gabriel Nascimento Gama"],
@@ -28,6 +32,8 @@
   {
     "id": "item-003",
     "doi": "https://doi.org/10.5281/zenodo.1000003",
+    "url": "https://doi.org/10.5281/zenodo.1000003",
+    "pdf_url": "https://zenodo.org/records/1000003/files/artigo.pdf",
     "year": 2022,
     "title": "Adoção de Software Livre na Pesquisa Científica Brasileira",
     "authors": ["Carlos Eduardo", "Fernanda Lima"],
@@ -41,6 +47,8 @@
   {
     "id": "item-004",
     "doi": "https://doi.org/10.5281/zenodo.1000004",
+    "url": "https://doi.org/10.5281/zenodo.1000004",
+    "pdf_url": "https://zenodo.org/records/1000004/files/artigo.pdf",
     "year": 2020,
     "title": "Indicadores Cientométricos do Acesso Aberto no Brasil",
     "authors": ["Beatriz Rocha", "Maria Silva"],

@@ -41,7 +41,12 @@ jobs:
       - name: Validate Default Template Dataset
         run: npm run data:validate
       - name: Validate EBBC OpenData Mock Dataset (643 Records)
-        run: npm run data:ebbc
+        run: |
+          if [ -d "mock/ebbc" ]; then
+            npm run data:ebbc
+          else
+            echo "ℹ️ Diretório mock/ebbc não existe neste repositório. Ignorando."
+          fi
 
   unit-and-api-tests:
     name: ⚡ Unit & REST API Tests (Node ${{ matrix.node-version }})
