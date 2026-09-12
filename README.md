@@ -138,6 +138,16 @@ npm test
    ```
 O arquivo `vercel.json` incluído cuidará de direcionar a API REST e a interface estática automaticamente.
 
+## 🔄 Sincronização Automática com Repositórios Filhos (Auto-Sync)
+
+Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizado com novas funcionalidades, melhorias de UI ou correções na API, é possível **atualizar automaticamente todos os repositórios derivados da organização** (ex: `EBBC-OpenData`):
+
+### Como Funciona a Sincronização Automática:
+1. **GitHub Action (`template-sync.yml`)**: O repositório filho contém a Action em `.github/workflows/template-sync.yml`.
+2. **Pull Request Automático**: Toda segunda-feira (ou ao disparar manualmente via `workflow_dispatch`), o GitHub Action verifica se há novos commits no template central `BRAN-Org/bran-web-database-template`.
+3. **Preservação dos Dados Locais**: O mecanismo mescla as alterações no código da infraestrutura (`src/`, `public/`, `server.js`), mantendo **100% intactos** os arquivos de dados locais (`data/`, `mock/`, `dataset.config.json`).
+4. **Revisão e Merge**: A equipe da BRAN Org recebe um Pull Request pronto com o título `chore(sync): 🚀 Atualizações automáticas do BRAN Web Database Template` para aprovar em 1 clique.
+
 ---
 
 ## 📜 Princípios e Licença
