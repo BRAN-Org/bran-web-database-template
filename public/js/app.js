@@ -40,7 +40,7 @@ function applyConfigToUI(config) {
 
   // Header Title & Subtitle
   const headerTitle = document.getElementById('header-title');
-  if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} OpenData <span>OS v1.0</span>`;
+  if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
 
   const headerSub = document.getElementById('header-subtitle');
   if (headerSub) headerSub.textContent = instName;
