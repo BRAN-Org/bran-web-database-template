@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <!-- Site Header -->
+  <!-- Institutional Header -->
   <header class="site-header">
     <div class="container nav-wrapper">
       <a href="/" class="brand-logo" id="brand-logo-link">
@@ -20,41 +20,40 @@
       </a>
 
       <div class="theme-selector">
-        <label for="theme-select" style="font-size: 0.8rem; color: var(--text-muted);">Tema:</label>
+        <label for="theme-select">Tema:</label>
         <select id="theme-select">
-          <option value="default">Glass Dark (Padrão)</option>
-          <option value="neon">Neon Cyberpunk</option>
-          <option value="minimalist">Apple Minimalist</option>
+          <option value="default">Corporate Dark (Padrão)</option>
+          <option value="light">Executive Light (Claro)</option>
+          <option value="mono">Monochromatic Minimal</option>
         </select>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Main Content Area -->
   <main class="container">
     
-    <!-- Hero Banner -->
+    <!-- Minimalist Hero Header -->
     <section class="hero-section">
-      <div class="hero-badge">
-        <span id="doi-badge">DOI: 10.5281/zenodo.0000000</span>
-        <span>•</span>
-        <span id="license-badge">Licença: Open Data</span>
+      <div class="hero-header-meta">
+        <span class="meta-badge" id="doi-badge">DOI: 10.5281/zenodo.0000000</span>
+        <span class="meta-badge" id="license-badge">Licença: Open Data</span>
       </div>
       
       <h1 class="hero-title" id="hero-title">
-        BRAN Academic <span class="text-gradient">Database Template</span>
+        BRAN Academic Database Template
       </h1>
       
       <p class="hero-subtitle" id="hero-subtitle">
-        Infraestrutura aberta de dados acadêmicos. Consulte metadados, visualize estatísticas e integre via API REST.
+        Infraestrutura aberta para a informação acadêmica no Brasil. Consulte metadados limpos, explore indicadores e integre via REST API pública.
       </p>
 
       <div class="hero-actions">
         <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\'explorer\']').click()">
-          🔍 Explorar Dados
+          🔍 Explorar Registros
         </button>
         <button class="btn btn-secondary" onclick="document.querySelector('[data-tab=\'correlations\']').click()">
-          📈 Ver Correlações
+          📈 Análises de Correlação
         </button>
         <button class="btn btn-secondary" onclick="document.querySelector('[data-tab=\'sandbox\']').click()">
           ⚡ API Sandbox & Docs
@@ -62,33 +61,39 @@
       </div>
     </section>
 
-    <!-- Tabs Navigation -->
+    <!-- Minimal Tab Bar -->
     <nav class="tabs-navigation" aria-label="Navegação do Portal">
-      <button class="tab-btn active" data-tab="dashboard" id="tab-btn-dashboard">📊 Painel Estatístico</button>
+      <button class="tab-btn active" data-tab="dashboard" id="tab-btn-dashboard">📊 Painel Geral</button>
       <button class="tab-btn" data-tab="correlations" id="tab-btn-correlations">📈 Análises & Correlações</button>
-      <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔍 Explorador de Registros</button>
+      <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔍 Explorador de Dados</button>
       <button class="tab-btn" data-tab="sandbox" id="tab-btn-sandbox">💻 API & Sandbox</button>
     </nav>
 
-    <!-- TAB 1: Painel Estatístico (Dashboard) -->
+    <!-- TAB 1: Painel Geral (Executive Dashboard) -->
     <section id="tab-dashboard" class="tab-content active">
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="metric-label">Total de Registros Catalogados</div>
-          <div class="metric-value text-gradient" id="stat-total-records">0</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">Base de dados limpa e padronizada</div>
+          <div class="metric-header">
+            <span class="metric-label">Registros Catalogados</span>
+          </div>
+          <div class="metric-value" id="stat-total-records">0</div>
+          <div class="metric-sub">Base de dados limpa e citável</div>
         </div>
 
         <div class="metric-card">
-          <div class="metric-label">Adoção de Ferramentas / Softwares</div>
+          <div class="metric-header">
+            <span class="metric-label">Taxa de Adoção Metodológica</span>
+          </div>
           <div class="metric-value" id="stat-adoption-rate" style="color: var(--accent-emerald);">0%</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">Publicações com softwares identificados</div>
+          <div class="metric-sub">Com softwares identificados</div>
         </div>
 
         <div class="metric-card">
-          <div class="metric-label">Software Mais Utilizado</div>
-          <div class="metric-value" id="stat-top-tool" style="font-size: 1.6rem; color: var(--accent-secondary);">—</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">Líder em frequência de citação</div>
+          <div class="metric-header">
+            <span class="metric-label">Ferramenta Principal</span>
+          </div>
+          <div class="metric-value" id="stat-top-tool" style="font-size: 1.5rem; color: var(--accent-blue);">—</div>
+          <div class="metric-sub">Líder em citações</div>
         </div>
       </div>
 
@@ -96,7 +101,7 @@
       <div class="charts-grid">
         <div class="chart-card">
           <div class="chart-header">
-            <h2 class="chart-title">Top Ferramentas e Softwares</h2>
+            <h2 class="chart-title">Principais Ferramentas e Softwares</h2>
           </div>
           <div class="chart-container">
             <canvas id="chart-top-tools"></canvas>
@@ -116,10 +121,10 @@
 
     <!-- TAB 2: Análises & Correlações Cientométricas -->
     <section id="tab-correlations" class="tab-content">
-      <div style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.5rem; font-weight: 700;">Cruzamento de Dados e Métricas Cientométricas</h2>
-        <p style="color: var(--text-secondary);">
-          Todas as correlações são calculadas em tempo real utilizando exclusivamente os dados internos dos anais/submissões do próprio evento.
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 1.25rem; font-weight: 700;">Análise de Correlações e Indicadores Internos</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+          Métricas calculadas exclusivamente com os dados internos das publicações do evento.
         </p>
       </div>
 
@@ -137,7 +142,7 @@
         <!-- Scatter Plot -->
         <div class="chart-card">
           <div class="chart-header">
-            <h2 class="chart-title">Dispersão: Autores por Artigo × Diversidade Metodológica</h2>
+            <h2 class="chart-title">Dispersão: Nº de Autores × Diversidade Metodológica</h2>
           </div>
           <div class="chart-container">
             <canvas id="chart-scatter-plot"></canvas>
@@ -146,33 +151,33 @@
       </div>
     </section>
 
-    <!-- TAB 3: Explorador de Registros -->
+    <!-- TAB 3: Explorador de Dados Corporativo -->
     <section id="tab-explorer" class="tab-content">
       <div class="explorer-layout">
         
         <!-- Sidebar Filters -->
         <aside class="sidebar-filters">
-          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">Filtros de Pesquisa</h2>
+          <div class="sidebar-title">Filtros Avançados</div>
           
           <div class="filter-group">
             <label for="search-input" class="filter-label">Busca Global</label>
-            <input type="text" id="search-input" class="filter-input" placeholder="Pesquisar por título, autor, resumo...">
+            <input type="text" id="search-input" class="filter-input" placeholder="Pesquisar por título, autor...">
           </div>
 
           <div id="dynamic-filters">
-            <!-- Filtros gerados dinamicamente via JS -->
+            <!-- Filtros dinâmicos inseridos via JS -->
           </div>
         </aside>
 
-        <!-- Data Table & Toolbar -->
+        <!-- Data Table -->
         <div class="data-table-container">
           <div class="table-toolbar">
-            <div style="font-weight: 600; font-size: 0.95rem;">Registros Encontrados</div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">Registros Catalogados</div>
             <div style="display: flex; gap: 8px;">
-              <a href="#" id="export-json-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" download>
+              <a href="#" id="export-json-btn" class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.8rem;" download>
                 📥 Exportar JSON
               </a>
-              <a href="#" id="export-csv-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" download>
+              <a href="#" id="export-csv-btn" class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.8rem;" download>
                 📊 Exportar CSV
               </a>
             </div>
@@ -190,17 +195,17 @@
                 </tr>
               </thead>
               <tbody id="table-body">
-                <!-- Linhas inseridas via JS -->
+                <!-- Linhas populadas via JS -->
               </tbody>
             </table>
           </div>
 
           <!-- Pagination Footer -->
           <div class="pagination">
-            <span id="pagination-info" style="font-size: 0.85rem; color: var(--text-secondary);">Exibindo 0 registros</span>
-            <div style="display: flex; gap: 8px;">
-              <button id="prev-page-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" disabled>Anterior</button>
-              <button id="next-page-btn" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;">Próxima</button>
+            <span id="pagination-info" style="font-size: 0.8rem; color: var(--text-secondary);">Exibindo 0 registros</span>
+            <div style="display: flex; gap: 6px;">
+              <button id="prev-page-btn" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.8rem;" disabled>Anterior</button>
+              <button id="next-page-btn" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.8rem;">Próxima</button>
             </div>
           </div>
         </div>
@@ -208,17 +213,17 @@
       </div>
     </section>
 
-    <!-- TAB 4: API Sandbox & Docs -->
+    <!-- TAB 4: API Sandbox Corporativo -->
     <section id="tab-sandbox" class="tab-content">
       <div class="sandbox-card">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Documentação e Sandbox da API REST</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 24px;">
-          Esta API é aberta e pública. Não exige chave de autenticação para leitura de dados.
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Documentação e Sandbox da REST API</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+          API pública e aberta sem necessidade de chaves de autenticação para requisições de leitura.
         </p>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <label for="sandbox-lang" style="font-weight: 600; font-size: 0.9rem;">Linguagem do Snippet:</label>
-          <select id="sandbox-lang" class="filter-select" style="width: auto; padding: 6px 14px;">
+          <label for="sandbox-lang" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">Linguagem:</label>
+          <select id="sandbox-lang" class="filter-select" style="width: auto; padding: 4px 12px;">
             <option value="curl">cURL (Terminal)</option>
             <option value="javascript">JavaScript (Fetch)</option>
             <option value="python">Python (Requests)</option>
@@ -234,14 +239,14 @@
 
   </main>
 
-  <!-- Site Footer -->
+  <!-- Institutional Footer -->
   <footer class="site-footer">
     <div class="container">
       <p>
-        Desenvolvido pela <strong>BRAN Org</strong> — Infraestrutura Aberta para a Informação Acadêmica e Científica no Brasil.
+        Desenvolvido pela <strong>BRAN Org</strong> — Infraestrutura Aberta para a Informação Acadêmica no Brasil.
       </p>
-      <p style="margin-top: 8px; font-size: 0.8rem;">
-        Alinhado aos Princípios <a href="https://www.go-fair.org/fair-principles/" target="_blank" style="color: var(--accent-primary);">FAIR</a> e à Declaração <a href="https://www.budapestopenaccessinitiative.org/" target="_blank" style="color: var(--accent-primary);">BOAI</a>.
+      <p style="margin-top: 6px; font-size: 0.75rem;">
+        Em conformidade com os Princípios <a href="https://www.go-fair.org/fair-principles/" target="_blank" style="color: var(--accent-primary);">FAIR</a> e a Declaração <a href="https://www.budapestopenaccessinitiative.org/" target="_blank" style="color: var(--accent-primary);">BOAI</a>.
       </p>
     </div>
   </footer>

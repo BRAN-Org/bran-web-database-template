@@ -4,28 +4,30 @@ Este documento detalha a arquitetura, arquivos criados e funcionalidades impleme
 
 ---
 
+## [1.2.0] - 2026-09-11 (Redesign Visual Minimalista & Corporativo - Branch `feat/redesign-ui`)
+
+### 🎨 Design & Interface de Usuário (UI/UX)
+- **Identidade Visual Minimalista & Corporativa**:
+  - Nova paleta de cores institucional baseada em Slate Profundo, Navy Blue (`#0f172a`, `#1e293b`, `#2563eb`) e acentos executivos em verde esmeralda.
+  - Tipografia de alta legibilidade utilizando **Plus Jakarta Sans** e **JetBrains Mono**.
+  - Novo tema de cores **Executive Light (Claro)** e **Monochromatic Minimal**.
+- **Componentes Estruturados**:
+  - Hero Header limpo com metadados de DOI e Licença em badges institucionais.
+  - Cards de estatísticas executivas com métricas numéricas destacadas e rótulos estruturados.
+  - Tabela de dados empresarial com zebra-striping sutil, hover em linhas e badges compactos.
+  - API Sandbox em estilo terminal corporativo (*Slate Theme*) com feedback tátil de cópia.
+
+---
+
 ## [1.1.0] - 2026-09-11 (Módulo de Correlações Cientométricas & Skill de Automação)
 
 ### 🚀 Novas Funcionalidades (Feat)
 * **Skill Customizada `changelog-generator`**:
-  - Criada a Skill em `.agents/skills/changelog-generator/SKILL.md` (e no caminho global `~/.gemini/config/skills/changelog-generator/SKILL.md`) que instrui o agente a inspecionar histórico de commits, diffs e preencher/atualizar o `CHANGELOG.md` automaticamente.
+  - Criada a Skill em `.agents/skills/changelog-generator/SKILL.md` (e no caminho global `~/.gemini/config/skills/changelog-generator/SKILL.md`).
 * **Análises Cientométricas e Correlações 100% Internas (`src/statsEngine.js`)**:
-  - `calculateCooccurrenceMatrix()`: Matriz 2D de coocorrência de atributos internos (ex: Softwares $\times$ Fontes de Dados).
-  - `calculateTemporalStacked()`: Evolução percentual empilhada por ano de edição.
-  - `calculateScatterData()`: Análise de dispersão (Nº de Autores $\times$ Diversidade Metodológica) com linha de tendência de regressão linear.
-  - `calculateParetoData()`: Curva de Pareto / Distribuição de Bradford acumulada.
+  - Matriz de coocorrência 2D, séries temporais, dispersão com regressão linear e curva de Pareto.
 * **Novos Endpoints REST (`src/routes.js`)**:
-  - `GET /api/v1/:entity/stats/correlations`
-  - `GET /api/v1/:entity/stats/temporal`
-  - `GET /api/v1/:entity/stats/scatter`
-  - `GET /api/v1/:entity/stats/pareto`
-* **Visualizações Avançadas em Canvas (`public/js/charts.js` & `public/index.html`)**:
-  - Adicionada a aba **"📈 Análises & Correlações"** no Portal Web.
-  - Renderizador de **Heatmap Matrix Chart** com gradiente de densidade.
-  - Renderizador de **Scatter Plot** com pontos de dispersão e linha de tendência.
-
-### ⚙️ Testes Automatizados (Test)
-- Adicionados 6 novos testes em `tests/unit.test.js` e `tests/api.test.js` cobrindo o cálculo de matrizes de coocorrência, dispersão e novos endpoints REST (**17/17 testes aprovados com 100% de sucesso**).
+  - `GET /api/v1/:entity/stats/correlations`, `/temporal`, `/scatter`, `/pareto`.
 
 ---
 
@@ -34,6 +36,6 @@ Este documento detalha a arquitetura, arquivos criados e funcionalidades impleme
 ### 🚀 Novas Funcionalidades (Feat)
 - Estrutura de configuração agnóstica em `config/dataset.config.json`.
 - Motores de busca em memória, estatísticas e exportação streaming JSON e CSV (BOM UTF-8) em `src/`.
-- Portal Web estático com Dashboard, Explorador de Tabela com filtros dinâmicos e API Sandbox com gerador de código.
+- Portal Web estático com Dashboard, Explorador de Tabela e API Sandbox.
 - CLI scripts para conversão de CSV e validação de datasets em `scripts/`.
 - Deploy instantâneo para Vercel via `vercel.json`.
