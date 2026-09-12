@@ -79,8 +79,8 @@ Edite o arquivo `config/dataset.config.json` para definir as informações espec
   "dataset": {
     "title": "Nome da Sua Base de Dados",
     "description": "Descrição sucinta dos metadados e acervo público.",
-    "doi": "10.5281/zenodo.XXXXXXXX",
-    "license": "Licença Escolhida (ex: MIT, CC-BY 4.0)",
+    "doi": "", // Opcional (Preencher apenas se fornecido)
+    "license": "Code: GNU GPLv3 | Data: CC BY-NC-SA 4.0",
     "entityName": "publicacoes",
     "primaryKey": "doi"
   },
