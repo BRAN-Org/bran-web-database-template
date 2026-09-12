@@ -1,7 +1,13 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
 import { loadData, queryItems, getItemByKey, normalizeString } from '../src/dataManager.js';
-import { calculateStats } from '../src/statsEngine.js';
+import { 
+  calculateStats, 
+  calculateCooccurrenceMatrix, 
+  calculateTemporalStacked, 
+  calculateScatterData, 
+  calculateParetoData 
+} from '../src/statsEngine.js';
 
 describe('Unit Tests - DataManager & StatsEngine', () => {
   test('normalizeString deve remover acentos e converter para caixa baixa', () => {
@@ -43,5 +49,30 @@ describe('Unit Tests - DataManager & StatsEngine', () => {
     assert.ok(stats.totalRecords > 0);
     assert.ok(stats.topLists.topTools);
     assert.ok(Array.isArray(stats.topLists.topTools.data));
+  });
+
+  test('calculateCooccurrenceMatrix deve calcular a matriz de coocorrência 2D 100% interna', () => {
+    const matrixData = calculateCooccurrenceMatrix('tools', 'data_sources', 5);
+    assert.ok(Array.isArray(matrixData.rows));
+    assert.ok(Array.isArray(matrixData.cols));
+    assert.ok(typeof matrixData.matrix === 'object');
+  });
+
+  test('calculateTemporalStacked deve calcular séries empilhadas por ano', () => {
+    const temporalData = calculateTemporalStacked('tools', 3);
+    assert.ok(Array.isArray(temporalData.years));
+    assert.ok(Array.isArray(temporalData.series));
+  });
+
+  test('calculateScatterData deve gerar coordenadas de dispersão e linha de tendência', () => {
+    const scatterData = calculateScatterData();
+    assert.ok(Array.isArray(scatterData.points));
+    assert.ok(typeof scatterData.trendline.slope === 'number');
+  });
+
+  test('calculateParetoData deve calcular acumulação percentual de frequências', () => {
+    const paretoData = calculateParetoData('authors', 5);
+    assert.ok(Array.isArray(paretoData.data));
+    assert.ok(paretoData.totalOccurrences >= 0);
   });
 });

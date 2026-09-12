@@ -1,7 +1,13 @@
 import { Router } from 'express';
 import { getDatasetConfig } from './config.js';
 import { queryItems, getItemByKey } from './dataManager.js';
-import { calculateStats } from './statsEngine.js';
+import { 
+  calculateStats, 
+  calculateCooccurrenceMatrix, 
+  calculateTemporalStacked, 
+  calculateScatterData, 
+  calculateParetoData 
+} from './statsEngine.js';
 import { exportDataset } from './exportEngine.js';
 
 export function createApiRouter() {
@@ -9,25 +15,49 @@ export function createApiRouter() {
   const config = getDatasetConfig();
   const entityName = config.dataset?.entityName || 'articles';
 
-  // 1. Endpoint de configuração pública do dataset
+  // 1. Configuração pública
   router.get('/config', (req, res) => {
     res.json(getDatasetConfig());
   });
 
-  // 2. Endpoint de estatísticas consolidadas
-  // Ex: /api/v1/articles/stats
+  // 2. Estatísticas consolidadas
   router.get(`/${entityName}/stats`, (req, res) => {
     res.json(calculateStats());
   });
 
-  // 3. Endpoint de exportação (CSV / JSON)
-  // Ex: /api/v1/articles/export
+  // 3. Matriz de Coocorrência / Correlações Internas (Heatmap)
+  router.get(`/${entityName}/stats/correlations`, (req, res) => {
+    const fieldA = req.query.fieldA || 'tools';
+    const fieldB = req.query.fieldB || 'data_sources';
+    const limit = parseInt(req.query.limit || '6', 10);
+    res.json(calculateCooccurrenceMatrix(fieldA, fieldB, limit));
+  });
+
+  // 4. Distribuição Temporal 100% Empilhada por Ano
+  router.get(`/${entityName}/stats/temporal`, (req, res) => {
+    const field = req.query.field || 'tools';
+    const limit = parseInt(req.query.limit || '5', 10);
+    res.json(calculateTemporalStacked(field, limit));
+  });
+
+  // 5. Análise de Dispersão (Scatter Plot)
+  router.get(`/${entityName}/stats/scatter`, (req, res) => {
+    res.json(calculateScatterData());
+  });
+
+  // 6. Análise de Pareto / Bradford
+  router.get(`/${entityName}/stats/pareto`, (req, res) => {
+    const field = req.query.field || 'authors';
+    const limit = parseInt(req.query.limit || '10', 10);
+    res.json(calculateParetoData(field, limit));
+  });
+
+  // 7. Endpoint de exportação (CSV / JSON)
   router.get(`/${entityName}/export`, (req, res) => {
     exportDataset(req, res);
   });
 
-  // 4. Endpoint de busca flexível por DOI / ID via wildcard de rota (suporta barras brutas no DOI)
-  // Ex: /api/v1/articles/by-key/https://doi.org/10.5281/zenodo.1000001
+  // 8. Busca flexível por DOI / ID via wildcard de rota
   router.use(`/${entityName}/by-key`, (req, res, next) => {
     let rawKey = req.path.replace(/^\//, '');
     if (!rawKey && req.query.value) {
@@ -43,8 +73,7 @@ export function createApiRouter() {
     return res.json(item);
   });
 
-  // 5. Endpoint de busca individual por ID/DOI percent-encoded
-  // Ex: /api/v1/articles/:key
+  // 9. Busca individual por ID/DOI percent-encoded
   router.get(`/${entityName}/:key`, (req, res) => {
     const item = getItemByKey(req.params.key);
     if (!item) {
@@ -53,8 +82,7 @@ export function createApiRouter() {
     return res.json(item);
   });
 
-  // 6. Endpoint de lista geral de itens (com filtros, busca textual, ordenação e paginação)
-  // Ex: /api/v1/articles
+  // 10. Lista geral de itens com filtros, busca textual, ordenação e paginação
   router.get(`/${entityName}`, (req, res) => {
     const result = queryItems(req.query);
     res.json(result);

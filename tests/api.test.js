@@ -41,14 +41,29 @@ describe('Integration Tests - REST API Endpoints', () => {
     assert.ok(stats.totalRecords > 0);
   });
 
+  test('GET /api/v1/articles/stats/correlations deve retornar matriz de coocorrência', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/articles/stats/correlations`);
+    assert.strictEqual(res.status, 200);
+    const data = await res.json();
+    assert.ok(Array.isArray(data.rows));
+    assert.ok(Array.isArray(data.cols));
+  });
+
+  test('GET /api/v1/articles/stats/scatter deve retornar pontos de dispersão', async () => {
+    const res = await fetch(`${baseUrl}/api/v1/articles/stats/scatter`);
+    assert.strictEqual(res.status, 200);
+    const data = await res.json();
+    assert.ok(Array.isArray(data.points));
+  });
+
   test('GET /api/v1/articles/export?format=csv deve retornar streaming CSV com BOM', async () => {
     const res = await fetch(`${baseUrl}/api/v1/articles/export?format=csv`);
     assert.strictEqual(res.status, 200);
     assert.ok(res.headers.get('content-type').includes('text/csv'));
     const buf = Buffer.from(await res.arrayBuffer());
-    assert.strictEqual(buf[0], 0xef); // BOM UTF-8 byte 1
-    assert.strictEqual(buf[1], 0xbb); // BOM UTF-8 byte 2
-    assert.strictEqual(buf[2], 0xbf); // BOM UTF-8 byte 3
+    assert.strictEqual(buf[0], 0xef);
+    assert.strictEqual(buf[1], 0xbb);
+    assert.strictEqual(buf[2], 0xbf);
   });
 
   test('GET /api/v1/articles/:key deve retornar item individual por ID', async () => {

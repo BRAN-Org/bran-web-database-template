@@ -9,12 +9,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
 
   try {
-    // 1. Carregar configuração pública do dataset
     const res = await fetch('/api/v1/config');
     appConfig = await res.json();
 
     applyConfigToUI(appConfig);
     await loadStats();
+    await loadCorrelations();
     await loadExplorerData();
     initSandbox();
   } catch (err) {
@@ -22,9 +22,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-/**
- * Aplica metadados do dataset à interface de usuário
- */
 function applyConfigToUI(config) {
   if (!config) return;
 
@@ -47,13 +44,9 @@ function applyConfigToUI(config) {
     licenseBadge.textContent = `Licença: ${config.dataset.license}`;
   }
 
-  // Renderizar filtros laterais baseados no schema do dataset.config.json
   renderSidebarFilters(config);
 }
 
-/**
- * Renderiza os filtros laterais dinâmicos com base no esquema configurado
- */
 function renderSidebarFilters(config) {
   const container = document.getElementById('dynamic-filters');
   if (!container) return;
@@ -70,7 +63,7 @@ function renderSidebarFilters(config) {
     label.textContent = facet.label;
 
     const input = document.createElement('input');
-    input.type = facet.type === 'number' ? 'text' : 'text';
+    input.type = 'text';
     input.className = 'filter-input';
     input.id = `filter-${facet.key}`;
     input.placeholder = `Filtrar por ${facet.label.toLowerCase()}...`;
@@ -86,9 +79,6 @@ function renderSidebarFilters(config) {
   });
 }
 
-/**
- * Carrega estatísticas e renderiza gráficos
- */
 async function loadStats() {
   if (!appConfig) return;
   const entity = appConfig.dataset?.entityName || 'articles';
@@ -108,13 +98,11 @@ async function loadStats() {
       topToolsEl.textContent = stats.topLists.topTools.data[0].name;
     }
 
-    // Renderizar gráfico de principais ferramentas
     if (stats.topLists?.topTools?.data) {
       const toolChart = new SimpleChart('chart-top-tools');
       toolChart.renderBarChart(stats.topLists.topTools.data);
     }
 
-    // Renderizar gráfico de evolução anual
     if (stats.breakdowns?.yearDistribution?.data) {
       const yearChart = new SimpleChart('chart-year-distribution');
       yearChart.renderLineChart(stats.breakdowns.yearDistribution.data);
@@ -125,8 +113,29 @@ async function loadStats() {
 }
 
 /**
- * Carrega dados do explorador de registros
+ * Carrega análises de correlação interna (Heatmap e Dispersão)
  */
+async function loadCorrelations() {
+  if (!appConfig) return;
+  const entity = appConfig.dataset?.entityName || 'articles';
+
+  try {
+    // 1. Carregar Matriz de Coocorrência (Heatmap)
+    const resMatrix = await fetch(`/api/v1/${entity}/stats/correlations?fieldA=tools&fieldB=data_sources&limit=5`);
+    const matrixData = await resMatrix.json();
+    const heatmapChart = new SimpleChart('chart-heatmap-matrix');
+    heatmapChart.renderHeatmapMatrix(matrixData);
+
+    // 2. Carregar Análise de Dispersão (Scatter Plot)
+    const resScatter = await fetch(`/api/v1/${entity}/stats/scatter`);
+    const scatterData = await resScatter.json();
+    const scatterChart = new SimpleChart('chart-scatter-plot');
+    scatterChart.renderScatterPlot(scatterData);
+  } catch (err) {
+    console.error('⚠️ Erro ao carregar correlações:', err);
+  }
+}
+
 async function loadExplorerData() {
   if (!appConfig) return;
   const entity = appConfig.dataset?.entityName || 'articles';
@@ -140,7 +149,6 @@ async function loadExplorerData() {
     params.set('search', searchInput.value);
   }
 
-  // Coletar valores dos filtros dinâmicos
   const facets = appConfig.schema?.facets || [];
   facets.forEach(facet => {
     const el = document.getElementById(`filter-${facet.key}`);
@@ -161,9 +169,6 @@ async function loadExplorerData() {
   }
 }
 
-/**
- * Renderiza as linhas da tabela de dados
- */
 function renderExplorerTable(items) {
   const tbody = document.getElementById('table-body');
   if (!tbody) return;
@@ -198,9 +203,6 @@ function renderExplorerTable(items) {
   });
 }
 
-/**
- * Atualiza botões de exportação
- */
 function updateExportLinks(params) {
   if (!appConfig) return;
   const entity = appConfig.dataset?.entityName || 'articles';
@@ -222,9 +224,6 @@ function updateExportLinks(params) {
   }
 }
 
-/**
- * Renderiza botões de paginação
- */
 function renderPagination(data) {
   const infoEl = document.getElementById('pagination-info');
   const prevBtn = document.getElementById('prev-page-btn');
@@ -258,9 +257,6 @@ function renderPagination(data) {
   }
 }
 
-/**
- * Sandbox de API e Gerador de Snippets de Código
- */
 function initSandbox() {
   const langSelect = document.getElementById('sandbox-lang');
   if (langSelect) {
@@ -302,9 +298,6 @@ function updateSandboxCode() {
   }
 }
 
-/**
- * Seletor de Temas Visuais
- */
 function initThemeSelector() {
   const themeSelect = document.getElementById('theme-select');
   if (!themeSelect) return;
@@ -317,13 +310,11 @@ function initThemeSelector() {
     const selected = e.target.value;
     document.documentElement.setAttribute('data-theme', selected);
     localStorage.setItem('bran_theme', selected);
-    loadStats(); // Recarregar gráficos com cores do novo tema
+    loadStats();
+    loadCorrelations();
   });
 }
 
-/**
- * Navegação por Abas (Dashboard, Explorador, API Sandbox)
- */
 function initTabs() {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
@@ -337,6 +328,10 @@ function initTabs() {
 
       btn.classList.add('active');
       document.getElementById(`tab-${target}`)?.classList.add('active');
+
+      if (target === 'correlations') {
+        loadCorrelations();
+      }
     });
   });
 
