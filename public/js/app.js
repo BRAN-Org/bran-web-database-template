@@ -5,13 +5,13 @@ let currentOffset = 0;
 const currentLimit = 10;
 let currentPalette = 'apple';
 let currentChartType = 'bar';
+let currentSortDir = 'asc';
 
 const chartInstances = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
   initModal();
-  initTopQuickSearch();
 
   try {
     const resConfig = await fetch('/api/v1/config');
@@ -34,64 +34,57 @@ function applyConfigToUI(config) {
   const title = config.dataset?.title || 'BRAN Open Data';
   const orgName = config.organization?.name || 'BRAN Org';
   const instName = config.organization?.institutionName || 'Faculdade / Periódico / Evento Científico';
+  const description = config.dataset?.description || '';
 
   document.title = `${title} · ${orgName}`;
 
-  const headerTitle = document.getElementById('header-institution-name');
+  // Header Title & Subtitle
+  const headerTitle = document.getElementById('header-title');
   if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
 
-  const tagInstName = document.getElementById('tag-institution-name');
-  if (tagInstName) tagInstName.textContent = instName;
+  const headerSub = document.getElementById('header-subtitle');
+  if (headerSub) headerSub.textContent = instName;
 
-  const homeTitle = document.getElementById('home-title');
-  if (homeTitle) homeTitle.textContent = title;
+  // Home Hero Section
+  const homeOrgName = document.getElementById('home-org-name');
+  if (homeOrgName) homeOrgName.textContent = `${orgName} — ${instName}`;
 
-  const homeDesc = document.getElementById('home-description');
-  if (homeDesc && config.dataset?.description) {
-    homeDesc.textContent = config.dataset.description;
+  const homeDatasetTitle = document.getElementById('home-dataset-title');
+  if (homeDatasetTitle) homeDatasetTitle.textContent = title;
+
+  const homeDesc = document.getElementById('home-description-text');
+  if (homeDesc && description) homeDesc.textContent = description;
+
+  // Footer Info
+  const footerOrg = document.getElementById('footer-org-name');
+  if (footerOrg) footerOrg.textContent = orgName;
+
+  const footerInst = document.getElementById('footer-inst-name');
+  if (footerInst) footerInst.textContent = instName;
+
+  // Badges & Links
+  const doiText = document.getElementById('badge-doi-text');
+  const doiLink = document.getElementById('badge-doi-link');
+  const footerDoi = document.getElementById('footer-doi-link');
+
+  if (config.dataset?.doi) {
+    const cleanDoi = config.dataset.doi.replace('https://doi.org/', '');
+    const doiHref = config.dataset.doi.startsWith('http') ? config.dataset.doi : `https://doi.org/${config.dataset.doi}`;
+    if (doiText) doiText.innerHTML = `<i class="fa-solid fa-link"></i> DOI: ${cleanDoi}`;
+    if (doiLink) doiLink.href = doiHref;
+    if (footerDoi) footerDoi.href = doiHref;
   }
 
-  // Bind URLs institucionais
-  const githubUrl = config.organization?.githubUrl;
-  if (githubUrl) {
-    const hGithub = document.getElementById('header-github-link');
-    if (hGithub) hGithub.href = githubUrl;
-    const fGithub = document.getElementById('footer-github-link');
-    if (fGithub) fGithub.href = githubUrl;
+  const githubLink = document.getElementById('badge-github-link');
+  const footerGithub = document.getElementById('footer-github-link');
+  if (config.organization?.githubUrl) {
+    if (githubLink) githubLink.href = config.organization.githubUrl;
+    if (footerGithub) footerGithub.href = config.organization.githubUrl;
   }
 
-  const doiUrl = config.organization?.doiUrl || (config.dataset?.doi ? `https://doi.org/${config.dataset.doi}` : null);
-  if (doiUrl) {
-    const hDoi = document.getElementById('header-doi-link');
-    if (hDoi) hDoi.href = doiUrl;
-    const hDoiText = document.getElementById('header-doi-text');
-    if (hDoiText && config.dataset?.doi) hDoiText.textContent = `DOI: ${config.dataset.doi.replace('https://doi.org/', '')}`;
-  }
-
-  const issuesUrl = config.organization?.issuesUrl;
-  if (issuesUrl) {
-    const fIssues = document.getElementById('footer-issues-link');
-    if (fIssues) fIssues.href = issuesUrl;
-  }
-}
-
-/**
- * Conecta a Barra de Busca Rápida Superior com o Explorador de Dados
- */
-function initTopQuickSearch() {
-  const topInput = document.getElementById('top-quick-search');
-  const mainSearchInput = document.getElementById('search-input');
-
-  if (topInput) {
-    topInput.addEventListener('input', debounce(() => {
-      const val = topInput.value;
-      if (mainSearchInput) mainSearchInput.value = val;
-
-      // Trocar dinamicamente para a aba do Explorador de Dados
-      document.querySelector('[data-tab="explorer-tab"]')?.click();
-      currentOffset = 0;
-      loadExplorerData();
-    }, 300));
+  const footerIssues = document.getElementById('footer-issues-link');
+  if (config.organization?.issuesUrl && footerIssues) {
+    footerIssues.href = config.organization.issuesUrl;
   }
 }
 
@@ -122,18 +115,33 @@ async function loadStatsDashboard() {
     const res = await fetch(`/api/v1/${entity}/stats`);
     const stats = await res.json();
 
+    // Populate Home & Dashboard Stats Cards
+    const totalCount = stats.totalRecords || 0;
+    const toolRate = `${stats.metrics?.toolAdoptionRate || 0}%`;
+    const uniqueSources = stats.topLists?.topSources?.data?.length || 0;
+    const uniqueAuthors = stats.topLists?.topAuthors?.data?.length || 0;
+
     const totalEl = document.getElementById('stat-total-articles');
-    if (totalEl) totalEl.textContent = stats.totalRecords || 0;
+    if (totalEl) totalEl.textContent = totalCount;
+    const homeTotal = document.getElementById('home-stat-total');
+    if (homeTotal) homeTotal.textContent = totalCount;
 
     const toolRateEl = document.getElementById('stat-tool-percentage');
-    if (toolRateEl) toolRateEl.textContent = `${stats.metrics?.toolAdoptionRate || 0}%`;
+    if (toolRateEl) toolRateEl.textContent = toolRate;
+    const homeTool = document.getElementById('home-stat-tools');
+    if (homeTool) homeTool.textContent = toolRate;
 
     const sourcesEl = document.getElementById('stat-unique-sources');
-    if (sourcesEl) sourcesEl.textContent = stats.topLists?.topSources?.data?.length || 0;
+    if (sourcesEl) sourcesEl.textContent = uniqueSources;
+    const homeSources = document.getElementById('home-stat-sources');
+    if (homeSources) homeSources.textContent = uniqueSources;
 
     const authorsEl = document.getElementById('stat-unique-authors');
-    if (authorsEl) authorsEl.textContent = stats.topLists?.topAuthors?.data?.length || 0;
+    if (authorsEl) authorsEl.textContent = uniqueAuthors;
+    const homeAuthors = document.getElementById('home-stat-authors');
+    if (homeAuthors) homeAuthors.textContent = uniqueAuthors;
 
+    // Charts
     chartInstances['years'] = new SimpleChart('chart-years');
     chartInstances['tools'] = new SimpleChart('chart-tools');
     chartInstances['sources'] = new SimpleChart('chart-sources');
@@ -174,8 +182,8 @@ function populateSidebarOptions(stats) {
       const label = document.createElement('label');
       label.className = 'checkbox-item';
       label.innerHTML = `
-        <input type="checkbox" class="year-filter-cb" value="${yr}">
-        <span>${yr}</span>
+        <input type="checkbox" class="year-filter-cb" value="${yr}" checked>
+        <span>Edição ${yr}</span>
       `;
       label.querySelector('input').addEventListener('change', () => {
         currentOffset = 0;
@@ -185,7 +193,7 @@ function populateSidebarOptions(stats) {
     });
   }
 
-  const toolSelect = document.getElementById('filter-tool-select');
+  const toolSelect = document.getElementById('filter-tool');
   if (toolSelect && stats.topLists?.topTools?.data) {
     stats.topLists.topTools.data.forEach(t => {
       const opt = document.createElement('option');
@@ -196,7 +204,7 @@ function populateSidebarOptions(stats) {
     toolSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
   }
 
-  const sourceSelect = document.getElementById('filter-source-select');
+  const sourceSelect = document.getElementById('filter-source');
   if (sourceSelect && stats.topLists?.topSources?.data) {
     stats.topLists.topSources.data.forEach(s => {
       const opt = document.createElement('option');
@@ -205,6 +213,26 @@ function populateSidebarOptions(stats) {
       sourceSelect.appendChild(opt);
     });
     sourceSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
+  }
+
+  const stageSelect = document.getElementById('filter-stage');
+  if (stageSelect) {
+    stageSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
+  }
+
+  const sortSelect = document.getElementById('sort-select');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
+  }
+
+  const sortDirBtn = document.getElementById('btn-sort-dir');
+  if (sortDirBtn) {
+    sortDirBtn.addEventListener('click', () => {
+      currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+      sortDirBtn.innerHTML = currentSortDir === 'asc' ? '<i class="fa-solid fa-sort-amount-down"></i>' : '<i class="fa-solid fa-sort-amount-up"></i>';
+      currentOffset = 0;
+      loadExplorerData();
+    });
   }
 }
 
@@ -215,6 +243,7 @@ async function loadExplorerData() {
   const params = new URLSearchParams();
   params.set('limit', currentLimit);
   params.set('offset', currentOffset);
+  params.set('order', currentSortDir);
 
   const searchInput = document.getElementById('search-input');
   if (searchInput && searchInput.value) {
@@ -226,19 +255,22 @@ async function loadExplorerData() {
     params.set('year', selectedYears.join(','));
   }
 
-  const toolVal = document.getElementById('filter-tool-select')?.value;
+  const toolVal = document.getElementById('filter-tool')?.value;
   if (toolVal) params.set('tool', toolVal);
 
-  const sourceVal = document.getElementById('filter-source-select')?.value;
+  const sourceVal = document.getElementById('filter-source')?.value;
   if (sourceVal) params.set('source', sourceVal);
 
-  const stageVal = document.getElementById('filter-stage-select')?.value;
+  const stageVal = document.getElementById('filter-stage')?.value;
   if (stageVal) params.set('stage', stageVal);
 
-  const hasToolCb = document.getElementById('filter-hastool-checkbox');
+  const hasToolCb = document.getElementById('filter-has-tool');
   if (hasToolCb && hasToolCb.checked) {
     params.set('has_tool', 'true');
   }
+
+  const sortVal = document.getElementById('sort-select')?.value;
+  if (sortVal) params.set('sort', sortVal);
 
   try {
     const res = await fetch(`/api/v1/${entity}?${params.toString()}`);
@@ -246,6 +278,7 @@ async function loadExplorerData() {
 
     renderArticleCards(data.results);
     renderPaginationInfo(data);
+    updateExportLinks(params);
   } catch (err) {
     console.error('⚠️ Erro ao carregar explorador:', err);
   }
@@ -259,7 +292,7 @@ function renderArticleCards(items) {
 
   if (!items || items.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; color: var(--text-muted); padding: 40px; background: var(--bg-surface); border-radius: var(--border-radius-lg);">
+      <div style="text-align: center; color: var(--text-secondary); padding: 40px; background: var(--bg-surface); border-radius: var(--border-radius-lg); border: 1px solid var(--border-color);">
         Nenhum registro encontrado para os filtros selecionados.
       </div>
     `;
@@ -353,23 +386,20 @@ function initModal() {
 }
 
 function renderPaginationInfo(data) {
-  const infoText = document.getElementById('results-count-text');
-  const pageInfo = document.getElementById('pagination-page-info');
-  const prevBtn = document.getElementById('btn-prev-page');
-  const nextBtn = document.getElementById('btn-next-page');
+  const displayedCount = document.getElementById('displayed-count');
+  const filteredCount = document.getElementById('filtered-count');
+  const pageIndicator = document.getElementById('page-indicator');
+  const prevBtn = document.getElementById('btn-prev');
+  const nextBtn = document.getElementById('btn-next');
 
   const start = data.offset + 1;
   const end = Math.min(data.offset + data.limit, data.filteredCount);
   const totalPages = Math.ceil(data.filteredCount / currentLimit) || 1;
   const currentPage = Math.floor(data.offset / currentLimit) + 1;
 
-  if (infoText) {
-    infoText.textContent = `Mostrando ${start}-${end} de ${data.filteredCount} artigos filtrados`;
-  }
-
-  if (pageInfo) {
-    pageInfo.textContent = `Pág. ${currentPage} de ${totalPages}`;
-  }
+  if (displayedCount) displayedCount.textContent = `${start}-${end}`;
+  if (filteredCount) filteredCount.textContent = data.filteredCount;
+  if (pageIndicator) pageIndicator.textContent = `Pág. ${currentPage} de ${totalPages}`;
 
   if (prevBtn) {
     prevBtn.disabled = data.offset <= 0;
@@ -387,6 +417,27 @@ function renderPaginationInfo(data) {
       currentOffset += currentLimit;
       loadExplorerData();
     };
+  }
+}
+
+function updateExportLinks(params) {
+  if (!appConfig) return;
+  const entity = appConfig.dataset?.entityName || 'articles';
+
+  const exportParams = new URLSearchParams(params);
+  exportParams.delete('limit');
+  exportParams.delete('offset');
+
+  const jsonBtn = document.getElementById('btn-export-json');
+  if (jsonBtn) {
+    exportParams.set('format', 'json');
+    jsonBtn.href = `/api/v1/${entity}/export?${exportParams.toString()}`;
+  }
+
+  const csvBtn = document.getElementById('btn-export-csv');
+  if (csvBtn) {
+    exportParams.set('format', 'csv');
+    csvBtn.href = `/api/v1/${entity}/export?${exportParams.toString()}`;
   }
 }
 
@@ -450,25 +501,64 @@ function updateSandboxCode() {
   }
 }
 
-function initTabs() {
+function switchTab(tabId) {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
 
+  tabBtns.forEach(b => {
+    if (b.getAttribute('data-tab') === tabId) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  tabPanels.forEach(p => {
+    if (p.id === tabId) {
+      p.classList.add('active');
+    } else {
+      p.classList.remove('active');
+    }
+  });
+}
+
+function initTabs() {
+  const tabBtns = document.querySelectorAll('.tab-btn');
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const target = btn.getAttribute('data-tab');
-
-      tabBtns.forEach(b => b.classList.remove('active'));
-      tabPanels.forEach(p => p.classList.remove('active'));
-
-      btn.classList.add('active');
-      document.getElementById(target)?.classList.add('active');
+      switchTab(target);
     });
   });
 
+  // Hero section buttons
+  const btnHeroExplore = document.getElementById('btn-hero-explore');
+  if (btnHeroExplore) {
+    btnHeroExplore.addEventListener('click', () => switchTab('explorer-tab'));
+  }
+
+  const btnHeroStats = document.getElementById('btn-hero-stats');
+  if (btnHeroStats) {
+    btnHeroStats.addEventListener('click', () => switchTab('dashboard-tab'));
+  }
+
+  // Top Search Input Integration
+  const topSearchInput = document.getElementById('top-quick-search');
   const searchInput = document.getElementById('search-input');
+
+  if (topSearchInput) {
+    topSearchInput.addEventListener('input', debounce(() => {
+      const val = topSearchInput.value;
+      if (searchInput) searchInput.value = val;
+      switchTab('explorer-tab');
+      currentOffset = 0;
+      loadExplorerData();
+    }, 300));
+  }
+
   if (searchInput) {
     searchInput.addEventListener('input', debounce(() => {
+      if (topSearchInput) topSearchInput.value = searchInput.value;
       currentOffset = 0;
       loadExplorerData();
     }, 300));
@@ -478,15 +568,15 @@ function initTabs() {
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       if (searchInput) searchInput.value = '';
-      const topSearch = document.getElementById('top-quick-search');
-      if (topSearch) topSearch.value = '';
-
-      document.querySelectorAll('.year-filter-cb').forEach(cb => cb.checked = false);
-      const toolSelect = document.getElementById('filter-tool-select');
+      if (topSearchInput) topSearchInput.value = '';
+      document.querySelectorAll('.year-filter-cb').forEach(cb => cb.checked = true);
+      const toolSelect = document.getElementById('filter-tool');
       if (toolSelect) toolSelect.value = '';
-      const sourceSelect = document.getElementById('filter-source-select');
+      const sourceSelect = document.getElementById('filter-source');
       if (sourceSelect) sourceSelect.value = '';
-      const hasToolCb = document.getElementById('filter-hastool-checkbox');
+      const stageSelect = document.getElementById('filter-stage');
+      if (stageSelect) stageSelect.value = '';
+      const hasToolCb = document.getElementById('filter-has-tool');
       if (hasToolCb) hasToolCb.checked = false;
 
       currentOffset = 0;
