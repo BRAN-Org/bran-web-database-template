@@ -3,7 +3,7 @@ import { SimpleChart } from './charts.js';
 let appConfig = null;
 let currentOffset = 0;
 const currentLimit = 10;
-let currentPalette = 'apple';
+let currentPalette = 'simeon';
 let currentChartType = 'bar';
 let currentSortDir = 'asc';
 
@@ -40,7 +40,7 @@ function applyConfigToUI(config) {
 
   // Header Title & Subtitle
   const headerTitle = document.getElementById('header-title');
-  if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
+  if (headerTitle) headerTitle.innerHTML = `${escapeHtml(orgName)} OpenData <span>OS v1.0</span>`;
 
   const headerSub = document.getElementById('header-subtitle');
   if (headerSub) headerSub.textContent = instName;
@@ -62,7 +62,7 @@ function applyConfigToUI(config) {
   const footerInst = document.getElementById('footer-inst-name');
   if (footerInst) footerInst.textContent = instName;
 
-  // Badges & Links
+  // Badges & External Links
   const doiText = document.getElementById('badge-doi-text');
   const doiLink = document.getElementById('badge-doi-link');
   const footerDoi = document.getElementById('footer-doi-link');
@@ -115,7 +115,7 @@ async function loadStatsDashboard() {
     const res = await fetch(`/api/v1/${entity}/stats`);
     const stats = await res.json();
 
-    // Populate Home & Dashboard Stats Cards
+    // Populate Metrics Summary Cards
     const totalCount = stats.totalRecords || 0;
     const toolRate = `${stats.metrics?.toolAdoptionRate || 0}%`;
     const uniqueSources = stats.topLists?.topSources?.data?.length || 0;
@@ -141,16 +141,26 @@ async function loadStatsDashboard() {
     const homeAuthors = document.getElementById('home-stat-authors');
     if (homeAuthors) homeAuthors.textContent = uniqueAuthors;
 
-    // Charts
+    // Pareto Ratio Text
+    const paretoEl = document.getElementById('stat-pareto-ratio');
+    if (paretoEl && stats.pareto?.pareto80Index !== undefined) {
+      paretoEl.textContent = `Top ${stats.pareto.pareto80Index + 1}`;
+    }
+
+    // Initialize 6 Chart Instances
     chartInstances['years'] = new SimpleChart('chart-years');
     chartInstances['tools'] = new SimpleChart('chart-tools');
     chartInstances['sources'] = new SimpleChart('chart-sources');
     chartInstances['stages'] = new SimpleChart('chart-stages');
+    chartInstances['pareto'] = new SimpleChart('chart-pareto');
+    chartInstances['temporal'] = new SimpleChart('chart-temporal');
 
     chartInstances['years_data'] = stats.breakdowns?.yearDistribution?.data;
     chartInstances['tools_data'] = stats.topLists?.topTools?.data;
     chartInstances['sources_data'] = stats.topLists?.topSources?.data;
     chartInstances['stages_data'] = stats.breakdowns?.stageBreakdown?.data;
+    chartInstances['pareto_data'] = stats.pareto;
+    chartInstances['temporal_data'] = stats.temporalStacked;
 
     updateAllCharts();
     populateSidebarOptions(stats);
@@ -161,13 +171,20 @@ async function loadStatsDashboard() {
 
 function updateAllCharts() {
   Object.keys(chartInstances).forEach(key => {
-    if (!key.endsWith('_data') && chartInstances[key]) {
-      const chart = chartInstances[key];
-      chart.setPalette(currentPalette);
-      chart.setChartType(currentChartType);
-      
-      const data = chartInstances[`${key}_data`];
-      if (data) chart.render(data);
+    if (key.endsWith('_data') || !chartInstances[key]) return;
+    const chart = chartInstances[key];
+    chart.setPalette(currentPalette);
+    chart.setChartType(currentChartType);
+    
+    const data = chartInstances[`${key}_data`];
+    if (!data) return;
+
+    if (key === 'pareto') {
+      chart.renderPareto(data);
+    } else if (key === 'temporal') {
+      chart.renderTemporalStacked(data);
+    } else {
+      chart.render(data);
     }
   });
 }
@@ -292,7 +309,7 @@ function renderArticleCards(items) {
 
   if (!items || items.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; color: var(--text-secondary); padding: 40px; background: var(--bg-surface); border-radius: var(--border-radius-lg); border: 1px solid var(--border-color);">
+      <div style="text-align: center; color: var(--text-secondary); padding: 40px; background: var(--bg-surface); border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); font-family: var(--font-mono);">
         Nenhum registro encontrado para os filtros selecionados.
       </div>
     `;

@@ -1,18 +1,19 @@
 /**
  * Componente de Gráficos Leves em Canvas HTML5 (Zero-Dependency)
- * Suporta alternância de paletas (Apple, Monocromático, Neon, Pastel) e tipos de gráfico (Barras, Linhas, Radar).
+ * Visual OS inspirado em simeon.sh com fonte Geist & Geist Mono.
+ * Suporta alternância de paletas (Simeon, Apple, Monocromático, Neon, Pastel) e tipos de gráfico (Barras, Linhas, Radar, Pareto, Empilhado).
  */
 export class SimpleChart {
   constructor(canvasId) {
     this.canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
     if (!this.canvas) return;
     this.ctx = this.canvas.getContext('2d');
-    this.palette = 'apple';
+    this.palette = 'simeon';
     this.chartType = 'bar';
   }
 
   setPalette(paletteName) {
-    this.palette = paletteName || 'apple';
+    this.palette = paletteName || 'simeon';
   }
 
   setChartType(type) {
@@ -28,8 +29,10 @@ export class SimpleChart {
       case 'monochrome':
         return ['#ffffff', '#d4d4d4', '#a3a3a3', '#737373', '#525252'];
       case 'apple':
-      default:
         return ['#ffffff', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+      case 'simeon':
+      default:
+        return ['#ffffff', '#3064ff', '#30d158', '#ff9f0a', '#fe257f', '#b59aff'];
     }
   }
 
@@ -66,7 +69,7 @@ export class SimpleChart {
     const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
     const barHeight = Math.min(26, (height - 20) / items.length - 6);
     const startX = 140;
-    const chartWidth = width - startX - 40;
+    const chartWidth = width - startX - 45;
 
     items.forEach((item, index) => {
       const label = item[labelKey] || item.name || '';
@@ -75,15 +78,15 @@ export class SimpleChart {
       const barW = (val / maxVal) * chartWidth;
 
       // Label
-      ctx.fillStyle = '#8e8e93';
-      ctx.font = '500 12px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '500 12px "Geist Mono", monospace';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       const truncatedLabel = label.length > 18 ? label.substring(0, 16) + '..' : label;
       ctx.fillText(truncatedLabel, startX - 10, y + barHeight / 2);
 
       // Track
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
       this.drawRoundedRect(startX, y, chartWidth, barHeight, 4);
       ctx.fill();
 
@@ -94,7 +97,7 @@ export class SimpleChart {
 
       // Value text
       ctx.fillStyle = '#ffffff';
-      ctx.font = '700 11px "Plus Jakarta Sans", sans-serif';
+      ctx.font = '700 11px "Geist Mono", monospace';
       ctx.textAlign = 'left';
       ctx.fillText(String(val), startX + barW + 8, y + barHeight / 2);
     });
@@ -136,8 +139,8 @@ export class SimpleChart {
       ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#8e8e93';
-      ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '500 11px "Geist Mono", monospace';
       ctx.textAlign = 'center';
       ctx.fillText(String(p.label), p.x, height - 15);
       ctx.fillText(String(p.val), p.x, p.y - 10);
@@ -181,7 +184,7 @@ export class SimpleChart {
 
     // Polygon
     ctx.beginPath();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.strokeStyle = colors[0];
     ctx.lineWidth = 2;
 
@@ -197,11 +200,129 @@ export class SimpleChart {
     points.forEach(p => {
       const lx = centerX + Math.cos(p.angle) * (radius + 18);
       const ly = centerY + Math.sin(p.angle) * (radius + 18);
-      ctx.fillStyle = '#8e8e93';
-      ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '500 11px "Geist Mono", monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(String(p.label).substring(0, 10), lx, ly);
+    });
+  }
+
+  renderPareto(data) {
+    if (!this.ctx || !data || !data.items || data.items.length === 0) return;
+    const { ctx } = this;
+    const { width, height } = this.setupCanvas();
+    ctx.clearRect(0, 0, width, height);
+
+    const items = data.items;
+    const paddingLeft = 50;
+    const paddingRight = 50;
+    const paddingTop = 30;
+    const paddingBottom = 40;
+
+    const chartW = width - paddingLeft - paddingRight;
+    const chartH = height - paddingTop - paddingBottom;
+    const maxVal = Math.max(...items.map(d => d.count), 1);
+
+    const barW = (chartW / items.length) * 0.55;
+    const colors = this.getPaletteColors();
+
+    // Bar chart (Individual counts)
+    items.forEach((item, i) => {
+      const x = paddingLeft + (i / items.length) * chartW + (chartW / items.length - barW) / 2;
+      const barH = (item.count / maxVal) * chartH;
+      const y = height - paddingBottom - barH;
+
+      ctx.fillStyle = colors[i % colors.length];
+      this.drawRoundedRect(x, y, barW, barH, 4);
+      ctx.fill();
+
+      // Label
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '500 10px "Geist Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.name.substring(0, 8), x + barW / 2, height - paddingBottom + 16);
+    });
+
+    // Cumulative line
+    ctx.beginPath();
+    ctx.strokeStyle = '#fe257f';
+    ctx.lineWidth = 2.5;
+
+    const linePoints = [];
+    items.forEach((item, i) => {
+      const x = paddingLeft + (i / items.length) * chartW + (chartW / items.length) / 2;
+      const y = height - paddingBottom - (item.cumulativePercentage / 100) * chartH;
+      linePoints.push({ x, y, pct: item.cumulativePercentage });
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // 80% line
+    const y80 = height - paddingBottom - 0.8 * chartH;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y80);
+    ctx.lineTo(width - paddingRight, y80);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#fe257f';
+    ctx.font = '600 10px "Geist Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('80% Pareto', width - paddingRight, y80 - 6);
+  }
+
+  renderTemporalStacked(data) {
+    if (!this.ctx || !data || !data.years || !data.series) return;
+    const { ctx } = this;
+    const { width, height } = this.setupCanvas();
+    ctx.clearRect(0, 0, width, height);
+
+    const { years, series } = data;
+    if (years.length === 0 || series.length === 0) return;
+
+    const paddingLeft = 50;
+    const paddingRight = 20;
+    const paddingTop = 30;
+    const paddingBottom = 40;
+
+    const chartW = width - paddingLeft - paddingRight;
+    const chartH = height - paddingTop - paddingBottom;
+    const colors = this.getPaletteColors();
+
+    // Calculate max sum per year
+    const yearlyTotals = years.map((_, yIdx) => {
+      return series.reduce((sum, s) => sum + (s.data[yIdx] || 0), 0);
+    });
+    const maxVal = Math.max(...yearlyTotals, 1);
+
+    const groupW = chartW / years.length;
+    const barW = groupW * 0.6;
+
+    years.forEach((yr, yIdx) => {
+      let currentY = height - paddingBottom;
+      const x = paddingLeft + yIdx * groupW + (groupW - barW) / 2;
+
+      series.forEach((s, sIdx) => {
+        const val = s.data[yIdx] || 0;
+        const sliceH = (val / maxVal) * chartH;
+        currentY -= sliceH;
+
+        if (sliceH > 0) {
+          ctx.fillStyle = colors[sIdx % colors.length];
+          this.drawRoundedRect(x, currentY, barW, sliceH, 2);
+          ctx.fill();
+        }
+      });
+
+      // Year Label
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '500 11px "Geist Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(String(yr), x + barW / 2, height - paddingBottom + 18);
     });
   }
 
@@ -223,15 +344,15 @@ export class SimpleChart {
     rows.forEach(r => cols.forEach(c => { if (matrix[r][c] > maxVal) maxVal = matrix[r][c]; }));
 
     cols.forEach((col, j) => {
-      ctx.fillStyle = '#8e8e93';
-      ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '600 11px "Geist Mono", monospace';
       ctx.textAlign = 'center';
       ctx.fillText(col.substring(0, 10), startX + j * cellW + cellW / 2, startY - 12);
     });
 
     rows.forEach((row, i) => {
-      ctx.fillStyle = '#8e8e93';
-      ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#8a9390';
+      ctx.font = '600 11px "Geist Mono", monospace';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       ctx.fillText(row.substring(0, 14), startX - 10, startY + i * cellH + cellH / 2);
@@ -240,13 +361,13 @@ export class SimpleChart {
         const count = matrix[row][col] || 0;
         const alpha = Math.max(0.06, count / maxVal);
         
-        ctx.fillStyle = `rgba(16, 185, 129, ${alpha})`;
+        ctx.fillStyle = `rgba(48, 209, 88, ${alpha})`;
         this.drawRoundedRect(startX + j * cellW + 2, startY + i * cellH + 2, cellW - 4, cellH - 4, 4);
         ctx.fill();
 
         if (count > 0) {
-          ctx.fillStyle = count / maxVal > 0.5 ? '#ffffff' : '#8e8e93';
-          ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
+          ctx.fillStyle = count / maxVal > 0.5 ? '#ffffff' : '#8a9390';
+          ctx.font = '700 12px "Geist Mono", monospace';
           ctx.textAlign = 'center';
           ctx.fillText(String(count), startX + j * cellW + cellW / 2, startY + i * cellH + cellH / 2);
         }
@@ -281,13 +402,35 @@ export class SimpleChart {
       const cx = padding + (p.x / maxX) * chartW;
       const cy = height - padding - (p.y / maxY) * chartH;
 
-      ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+      ctx.fillStyle = 'rgba(48, 100, 255, 0.7)';
       ctx.beginPath();
       ctx.arc(cx, cy, 6, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
     });
+
+    // Draw Trendline if available
+    if (data.slope !== undefined && data.intercept !== undefined) {
+      const x1 = 0;
+      const y1 = data.intercept;
+      const x2 = maxX;
+      const y2 = data.slope * maxX + data.intercept;
+
+      const px1 = padding + (x1 / maxX) * chartW;
+      const py1 = height - padding - Math.min(Math.max(y1, 0), maxY) / maxY * chartH;
+      const px2 = padding + (x2 / maxX) * chartW;
+      const py2 = height - padding - Math.min(Math.max(y2, 0), maxY) / maxY * chartH;
+
+      ctx.strokeStyle = '#30d158';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(px1, py1);
+      ctx.lineTo(px2, py2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
   }
 
   drawRoundedRect(x, y, w, h, r) {

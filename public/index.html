@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BRAN OpenData - API Pública e Dashboard de Dados</title>
+  <title>BRAN OpenData OS - Financial & Academic Data Platform</title>
   
-  <!-- Fonts -->
+  <!-- Geist & Geist Mono Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,7 +27,7 @@
           <i class="fa-solid fa-graduation-cap"></i>
         </div>
         <div class="logo-text">
-          <h1 id="header-title">BRAN <span>OpenData</span></h1>
+          <h1 id="header-title">BRAN OpenData <span>OS v1.0</span></h1>
           <p id="header-subtitle">Faculdade / Periódico / Evento Científico</p>
         </div>
       </div>
@@ -35,12 +35,15 @@
       <!-- Quick Search Bar in Top Header -->
       <div class="top-search-container">
         <i class="fa-solid fa-magnifying-glass top-search-icon"></i>
-        <input type="text" id="top-quick-search" class="top-search-input" placeholder="Buscar artigos, autores, ferramentas...">
+        <input type="text" id="top-quick-search" class="top-search-input" placeholder="Buscar registros, autores, ferramentas...">
       </div>
       
-      <!-- Badges / External Links -->
+      <!-- Badges / External Links & Status Dot -->
       <div class="header-badges">
-        <a href="https://doi.org/10.5281/zenodo.0000000" target="_blank" id="badge-doi-link" class="badge-link" title="Acessar DOI no Zenodo">
+        <span class="badge-pill" title="Status da API REST">
+          <span class="status-dot"></span> API Online
+        </span>
+        <a href="https://doi.org/10.5281/zenodo.0000000" target="_blank" id="badge-doi-link" class="badge-link" title="Acessar DOI Zenodo">
           <span class="badge-pill" id="badge-doi-text"><i class="fa-solid fa-link"></i> DOI: 10.5281/zenodo.0000000</span>
         </a>
         <a href="https://github.com/BRAN-Org/bran-web-database-template" target="_blank" id="badge-github-link" class="badge-link" title="Repositório GitHub">
@@ -55,7 +58,7 @@
         <i class="fa-solid fa-house"></i> <span>Início</span>
       </button>
       <button class="tab-btn" data-tab="dashboard-tab">
-        <i class="fa-solid fa-chart-line"></i> <span>Painel de Estatísticas</span>
+        <i class="fa-solid fa-chart-line"></i> <span>Dashboard Completo</span>
       </button>
       <button class="tab-btn" data-tab="explorer-tab" id="explorer-tab-btn">
         <i class="fa-solid fa-magnifying-glass"></i> <span>Explorador de Dados</span>
@@ -77,8 +80,8 @@
         <!-- Hero Card Banner -->
         <div class="hero-card glass-panel">
           <div class="hero-header-row">
-            <span class="hero-badge"><i class="fa-solid fa-atom"></i> Ciência Aberta (Open Access)</span>
-            <span class="hero-badge secondary"><i class="fa-solid fa-database"></i> FAIR Data Standards</span>
+            <span class="hero-badge"><span class="status-dot"></span> BRAN Open Data OS v1.0.0</span>
+            <span class="hero-badge secondary"><i class="fa-solid fa-atom"></i> FAIR & BOAI Open Access</span>
           </div>
 
           <h1 id="home-org-name" class="hero-title">Organização / Periódico / Faculdade / Evento</h1>
@@ -95,10 +98,10 @@
               <i class="fa-solid fa-magnifying-glass"></i> Explorar Acervo de Dados
             </button>
             <button class="btn btn-secondary btn-hero" id="btn-hero-stats">
-              <i class="fa-solid fa-chart-line"></i> Painel de Estatísticas
+              <i class="fa-solid fa-chart-line"></i> Painel Dashboard Completo
             </button>
             <a href="/api/v1/articles" target="_blank" class="btn btn-secondary btn-hero">
-              <i class="fa-solid fa-terminal"></i> Acessar REST API
+              <i class="fa-solid fa-terminal"></i> REST API Endpoint
             </a>
           </div>
         </div>
@@ -165,9 +168,9 @@
 
       </section>
 
-      <!-- 1. PAINEL DE ESTATÍSTICAS -->
+      <!-- 1. DASHBOARD COMPLETO (TODOS OS DADOS DA API) -->
       <section id="dashboard-tab" class="tab-panel">
-        <!-- Key Stats Cards -->
+        <!-- Key Stats Cards Consolidados -->
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
@@ -204,17 +207,27 @@
             </div>
             <div class="stat-footer">Autores nos anais</div>
           </div>
+
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+            <div class="stat-info">
+              <h3>Distribuição Pareto</h3>
+              <p class="stat-value" id="stat-pareto-ratio">80/20</p>
+            </div>
+            <div class="stat-footer">Concentração de ferramentas</div>
+          </div>
         </div>
 
         <!-- Charts Customizer Toolbar -->
         <div class="charts-toolbar glass-panel">
           <div class="toolbar-title">
-            <i class="fa-solid fa-sliders"></i> <span>Personalizar Visualização</span>
+            <i class="fa-solid fa-sliders"></i> <span>Personalizar Visualização (Simeon OS)</span>
           </div>
           <div class="toolbar-controls">
             <div class="toolbar-control">
               <label for="chart-theme-select"><i class="fa-solid fa-palette"></i> <span>Paleta:</span></label>
               <select id="chart-theme-select" class="toolbar-select">
+                <option value="simeon">Simeon Dark OS</option>
                 <option value="apple">Apple Minimalist</option>
                 <option value="monochrome">Monocromático Sleek</option>
                 <option value="neon">Neon Cyberpunk</option>
@@ -233,11 +246,11 @@
           </div>
         </div>
 
-        <!-- Charts Grid 2x2 -->
+        <!-- Full Charts Grid 6 Panels (Todos os Dados) -->
         <div class="charts-grid">
           <div class="chart-card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-calendar-days"></i> <span>Publicações por Edição</span></h3>
+              <h3><i class="fa-solid fa-calendar-days"></i> <span>Publicações por Edição (Histórico)</span></h3>
             </div>
             <div class="chart-container">
               <canvas id="chart-years"></canvas>
@@ -246,7 +259,7 @@
           
           <div class="chart-card">
             <div class="chart-header">
-              <h3><i class="fa-solid fa-screwdriver-wrench"></i> <span>Top Softwares & Ferramentas Utilizadas</span></h3>
+              <h3><i class="fa-solid fa-screwdriver-wrench"></i> <span>Top Softwares & Ferramentas</span></h3>
             </div>
             <div class="chart-container">
               <canvas id="chart-tools"></canvas>
@@ -268,6 +281,24 @@
             </div>
             <div class="chart-container">
               <canvas id="chart-stages"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3><i class="fa-solid fa-chart-line"></i> <span>Curva de Pareto 80/20 (Adoção de Software)</span></h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-pareto"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3><i class="fa-solid fa-layer-group"></i> <span>Evolução Temporal Empilhada de Ferramentas</span></h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-temporal"></canvas>
             </div>
           </div>
         </div>
