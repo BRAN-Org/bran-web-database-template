@@ -331,7 +331,7 @@ function renderArticleCards(items) {
     card.className = 'article-card';
 
     const year = item.year || item.ano || 'N/A';
-    const doi = item.doi || item.id || 'N/A';
+    const doi = (item.doi && item.doi !== 'N/A') ? item.doi : (item.id && item.id !== 'N/A' ? item.id : '');
     const title = item.title || item.titulo || 'Sem título';
     const authors = Array.isArray(item.authors) ? item.authors.join(', ') : (item.authors || 'N/A');
 
@@ -354,10 +354,12 @@ function renderArticleCards(items) {
       });
     }
 
+    const doiBadgeHtml = doi ? `<span class="doi-link-text">${escapeHtml(doi)}</span>` : '';
+
     card.innerHTML = `
       <div class="article-card-header">
         <span class="badge-year">${year}</span>
-        <span class="doi-link-text">${escapeHtml(doi)}</span>
+        ${doiBadgeHtml}
       </div>
       <h3 class="article-title">${escapeHtml(title)}</h3>
       <p class="article-authors">${escapeHtml(authors)}</p>
