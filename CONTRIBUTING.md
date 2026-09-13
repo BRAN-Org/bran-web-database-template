@@ -35,17 +35,19 @@ Ao adicionar novos arquivos de infraestrutura ao template, certifique-se de resp
 * Arquivos como `data/`, `provenance.json` e `health_check.json` contêm dados **específicos de cada evento/acervo** e são ignorados pelo sync para não sobrescrever os dados reais das bases de dados consumidoras.
 
 ### 3. Submetendo Alterações no Template
-1. Crie uma branch descritiva:
-   `feat/novo-header-responsivo` ou `fix/layout-tabela-autores`
+1. Crie uma branch descritiva a partir da `development`:
+   `git checkout -b feat/novo-header-responsivo development`
 2. Garanta que o servidor `server.js` e as rotas de API continuam funcionando perfeitamente.
-3. Abra um Pull Request detalhando quais repositórios serão impactados pela atualização do template.
+3. **Abertura do Pull Request**:
+   > ⚠️ **REGRA OBRIGATÓRIA**: Todo Pull Request DEVE ter como branch de destino a **`development`** (`base: development`).
+   > **NÃO abra Pull Request direto para a branch `main`.** O merge para a `main` é realizado exclusivamente pelos mantenedores após testes de homologação.
 
 ---
 
 ## 🔄 Fluxo de Propagação para as Bases de Dados
 
 ```text
-[1. PR Aprovado no Template] ➔ [2. Merge na branch main] ➔ [3. Template Sync Disparado] ➔ [4. Atualização Automática nas Bases de Dados]
+[1. PR Aprovado na branch development] ➔ [2. Homologação & Merge na branch main] ➔ [3. Template Sync Disparado] ➔ [4. Atualização Automática nas Bases de Dados]
 ```
 
 Obrigado por ajudar a evoluir a infraestrutura visual e tecnológica da BRAN Org! 🚀✨
