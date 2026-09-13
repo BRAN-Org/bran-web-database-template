@@ -151,6 +151,14 @@ Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizad
 
 ---
 
+## Confiabilidade e Auditagem dos Dados
+
+| Nível de Confiabilidade | Nota & Justificativa do Acervo |
+| :---: | :--- |
+| {{RELIABILITY_BADGE}} | {{RELIABILITY_JUSTIFICATION}} |
+
+---
+
 ## 📜 Princípios e Licença
 
 Este template foi construído em conformidade com as diretrizes internacionais de Ciência Aberta:
