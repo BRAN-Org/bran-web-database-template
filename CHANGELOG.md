@@ -4,6 +4,21 @@ Este documento detalha a arquitetura, arquivos criados e funcionalidades impleme
 
 ---
 
+## [1.5.0] - 2026-09-18 (Formatos de Intercâmbio Bibliográfico: BibTeX e RIS)
+
+### 🚀 Novas Funcionalidades (Feat)
+- **Exportação BibTeX (`format=bibtex` / `format=bib`)**: Geração dinâmica de entradas `@inproceedings{...}` formatadas para citação acadêmica em LaTeX e importação no Zotero.
+- **Exportação RIS (`format=ris`)**: Suporte ao padrão internacional Research Information Systems (`TY - CONF ... ER - `) para integração direta com VOSviewer, Mendeley, EndNote e Bibliometrix (R).
+- **Interface & Explorer**: Adicionados botões dedicados de exportação rápida para BibTeX e RIS no painel de busca do Explorador de Dados.
+
+### 📝 Documentação (Docs)
+- Atualização da aba de Documentação da API com os novos formatos de exportação bibliográfica suportados.
+
+### ⚙️ Infraestrutura & Testes (Chore/Test)
+- Adicionados testes de integração no `tests/api.test.js` para validação de cabeçalhos e sintaxe de BibTeX e RIS.
+
+---
+
 ## [1.4.0] - 2026-09-11 (Reestruturação da Tela Inicial, Barra Superior & Footer Institucional - Branch `feat/redesign-ui`)
 
 ### 🏠 Tela Inicial (Landing Overview)
