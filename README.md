@@ -170,6 +170,14 @@ Este template foi construído em conformidade com as diretrizes internacionais d
 
 ---
 
+## 📬 Submissão de Dados
+
+Possui dados acadêmicos ou acervos científicos que gostaria de disponibilizar publicamente pela BRAN Org? Preencha o formulário de submissão:
+
+➡️ **[Formulário de Submissão de Datasets](https://forms.gle/jNBuP1mjyUXc6v1fA)**
+
+---
+
 <p align="center">
   Desenvolvido com ❤️ pela <strong>BRAN Org</strong>
 </p>
