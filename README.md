@@ -1,4 +1,4 @@
-# 🏛️ BRAN Web Database Template
+# BRAN Web Database Template
 
 <p align="center">
   <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
@@ -12,7 +12,7 @@ Template leve, modular e reproduzível para criação de **APIs REST públicas**
 
 ---
 
-## ⚡ Recursos Principais
+## Recursos Principais
 
 - **Zero-Build & Alta Performance**: Desenvolvido em Node.js com ES Modules (`"type": "module"`), sem necessidade de transpiladores ou dependências pesadas (`express` e `cors`).
 - **Totalmente Agnosticismo a Dados**: Configure o esquema dos dados, nome da entidade, campos de busca, filtros e estatísticas através de um único arquivo de configuração (`config/dataset.config.json`).
@@ -30,7 +30,7 @@ Template leve, modular e reproduzível para criação de **APIs REST públicas**
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 bran-web-database-template/
@@ -62,7 +62,7 @@ bran-web-database-template/
 
 ---
 
-## 🚀 Como Usar Este Template para um Novo Dataset
+## Como Usar Este Template para um Novo Dataset
 
 ### 1. Clonar e Instalar Dependências
 ```bash
@@ -119,7 +119,7 @@ Acesse a aplicação no navegador em: `http://localhost:3000`
 
 ---
 
-## 🧪 Testes Automatizados
+## Testes Automatizados
 
 O template utiliza o executor nativo de testes do Node.js (`node --test`), sem necessidade de dependências externas como Jest ou Mocha:
 
@@ -129,7 +129,7 @@ npm test
 
 ---
 
-## 🌐 Deploy (Vercel / Render)
+## Deploy (Vercel / Render)
 
 ### Deploy na Vercel
 1. Instale a CLI da Vercel (`npm i -g vercel`) ou conecte o repositório no painel web da Vercel.
@@ -139,7 +139,7 @@ npm test
    ```
 O arquivo `vercel.json` incluído cuidará de direcionar a API REST e a interface estática automaticamente.
 
-## 🔄 Sincronização Automática com Repositórios Filhos (Auto-Sync)
+## Sincronização Automática com Repositórios Filhos (Auto-Sync)
 
 Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizado com novas funcionalidades, melhorias de UI ou correções na API, é possível **atualizar automaticamente todos os repositórios derivados da organização** (ex: `EBBC-OpenData`):
 
@@ -147,7 +147,7 @@ Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizad
 1. **GitHub Action (`template-sync.yml`)**: O repositório filho contém a Action em `.github/workflows/template-sync.yml`.
 2. **Pull Request Automático**: Toda segunda-feira (ou ao disparar manualmente via `workflow_dispatch`), o GitHub Action verifica se há novos commits no template central `BRAN-Org/bran-web-database-template`.
 3. **Preservação dos Dados Locais**: O mecanismo mescla as alterações no código da infraestrutura (`src/`, `public/`, `server.js`), mantendo **100% intactos** os arquivos de dados locais (`data/`, `mock/`, `dataset.config.json`).
-4. **Revisão e Merge**: A equipe da BRAN Org recebe um Pull Request pronto com o título `chore(sync): 🚀 Atualizações automáticas do BRAN Web Database Template` para aprovar em 1 clique.
+4. **Revisão e Merge**: A equipe da BRAN Org recebe um Pull Request pronto com o título `chore(sync): atualizações automáticas do BRAN Web Database Template` para aprovar em 1 clique.
 
 ---
 
@@ -159,7 +159,7 @@ Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizad
 
 ---
 
-## 📜 Princípios e Licença
+## Princípios e Licença
 
 Este template foi construído em conformidade com as diretrizes internacionais de Ciência Aberta:
 - **[Princípios FAIR](https://www.go-fair.org/fair-principles/)**: Dados *Findable, Accessible, Interoperable, Reusable*.
@@ -171,5 +171,5 @@ Este template foi construído em conformidade com as diretrizes internacionais d
 ---
 
 <p align="center">
-  Desenvolvido com ❤️ pela <strong>BRAN Org</strong>
+  Desenvolvido pela <strong>BRAN Org</strong>
 </p>
