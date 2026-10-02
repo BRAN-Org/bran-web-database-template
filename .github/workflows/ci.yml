@@ -1,4 +1,4 @@
-name: 🛡️ BRAN Org Continuous Integration
+name: BRAN Org Continuous Integration
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint-and-syntax:
-    name: 🔍 Code Syntax & Lint Check
+    name: Code Syntax & Lint Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
@@ -29,7 +29,7 @@ jobs:
           node --check public/js/charts.js
 
   dataset-validation:
-    name: 📦 Dataset Schema & EBBC Mock Validation
+    name: Dataset Schema & EBBC Mock Validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
@@ -45,11 +45,11 @@ jobs:
           if [ -d "mock/ebbc" ]; then
             npm run data:ebbc
           else
-            echo "ℹ️ Diretório mock/ebbc não existe neste repositório. Ignorando."
+            echo "Diretorio mock/ebbc nao existe neste repositorio. Ignorando."
           fi
 
   unit-and-api-tests:
-    name: ⚡ Unit & REST API Tests (Node ${{ matrix.node-version }})
+    name: Unit & REST API Tests (Node ${{ matrix.node-version }})
     needs: [lint-and-syntax, dataset-validation]
     runs-on: ubuntu-latest
     strategy:

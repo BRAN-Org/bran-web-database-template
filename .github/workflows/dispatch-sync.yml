@@ -16,12 +16,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ORGANIZATION_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          echo "🚀 Notificando repositórios derivados da BRAN Org sobre o merge na main..."
-          # Lista de repositórios derivados da organização BRAN Org
+          echo "Notificando repositorios derivados da BRAN Org sobre o merge na main..."
+          # Lista de repositorios derivados da organizacao BRAN Org
           REPOS=("BRAN-Org/ebbc-open-database" "BRAN-Org/abec-open-database")
           
           for REPO in "${REPOS[@]}"; do
-            echo "📡 Enviando sinal de atualização para: $REPO"
+            echo "Enviando sinal de atualizacao para: $REPO"
             gh api \
               --method POST \
               -H "Accept: application/vnd.github+json" \
