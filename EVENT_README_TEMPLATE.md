@@ -1,4 +1,4 @@
-# 🏛️ {{DATASET_TITLE}}
+# {{DATASET_TITLE}}
 
 <p align="center">
   <a href="{{ORG_URL}}"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
@@ -12,7 +12,7 @@
 
 ---
 
-## 📌 Visão Geral da Base de Dados
+## Visão Geral da Base de Dados
 
 - **Instituição / Evento**: {{INSTITUTION_NAME}}
 - **Entidade Principal**: `{{ENTITY_NAME}}`
@@ -23,7 +23,7 @@
 
 ---
 
-## 🌐 Portal Web Interativo & REST API
+## Portal Web Interativo & REST API
 
 Esta base de dados fornece tanto uma interface web interativa (Dashboard) quanto uma **API REST pública de alta performance** sem necessidade de chave de API.
 
@@ -41,7 +41,7 @@ Esta base de dados fornece tanto uma interface web interativa (Dashboard) quanto
 
 ---
 
-## 💻 Exemplo de Consumo da API
+## Exemplo de Consumo da API
 
 ### cURL
 ```bash
@@ -67,7 +67,7 @@ print(f"Total de registros: {data['total']}")
 
 ---
 
-## 🚀 Como Rodar Localmente
+## Como Rodar Localmente
 
 ### 1. Clonar o Repositório
 ```bash
@@ -92,7 +92,7 @@ Acesse no navegador: `http://localhost:3000`
 
 ---
 
-## 🧪 Validação dos Dados
+## Validação dos Dados
 Para testar a integridade do schema antes do deploy:
 ```bash
 npm run data:validate
@@ -100,7 +100,7 @@ npm run data:validate
 
 ---
 
-## 📖 Como Citar Este Dataset
+## Como Citar Este Dataset
 
 Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor cite:
 
@@ -117,7 +117,7 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 ---
 
-## 📜 Princípios e Licença
+## Princípios e Licença
 
 - **[Princípios FAIR](https://www.go-fair.org/fair-principles/)**: Dados *Findable, Accessible, Interoperable, Reusable*.
 - **[BOAI](https://www.budapestopenaccessinitiative.org/)**: Livre acesso à informação e produção acadêmica.
@@ -136,5 +136,5 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 ---
 
 <p align="center">
-  Mantido com ❤️ pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>{{INSTITUTION_NAME}}</strong>
+  Mantido pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>{{INSTITUTION_NAME}}</strong>
 </p>
