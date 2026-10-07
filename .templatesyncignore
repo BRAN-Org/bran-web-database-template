@@ -3,3 +3,6 @@
 data/
 config/dataset.config.json
 README.md
+CHANGELOG.md
+CITATION.cff
+mock/
