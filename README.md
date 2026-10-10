@@ -22,7 +22,7 @@ Template leve, modular e reproduzível para criação de **APIs REST públicas**
  - `GET /api/v1/:entity/:key` e `/api/v1/:entity/by-key/*`: Busca exata por DOI ou ID (suporta barras brutas e URLs).
  - `GET /api/v1/:entity/export`: Exportação em streaming nos formatos **JSON** e **CSV** (com BOM UTF-8 para exibição nativa no Excel).
 - **Dashboard Web Interativo (Portal)**:
- - **Métricas e Gráficos**: Visualizações leves em Canvas (evoluções temporais, rankings).
+ - **Métricas e Gráficos**: Visualizações vetoriais nativas e responsivas em SVG powered by [`pure-svg-charts`](https://github.com/GabrielBaiano/pure-svg-charts) (evoluções temporais, rankings, rosca/donut com suporte a exportação em vetor SVG e imagem PNG).
  - **Explorador Avançado**: Tabela com busca em tempo real, filtros laterais por faceta e exportações instantâneas.
  - **API Sandbox**: Gerador dinâmico de snippets de código em **JavaScript (Fetch)**, **Python (Requests)** e **cURL**.
  - **Temas Visuais**: Suporte a *Glass Dark*, *Neon Cyberpunk* e *Apple Minimalist*.
@@ -42,7 +42,8 @@ bran-web-database-template/
 │ ├── css/style.css # Design system e temas
 │ ├── js/
 │ │ ├── app.js # Lógica do painel e interação da API Sandbox
-│ │ └── charts.js # Componente de gráficos em Canvas
+│ │ ├── charts.js # Componente de gráficos vetoriais nativos em SVG
+│ │ └── pure-svg-charts.bundle.js # Motor vetorial autônomo pure-svg-charts
 │ └── index.html # Interface do Portal Web
 ├── scripts/
 │ ├── convert_csv_to_json.js # Script utilitário para converter CSV em JSON

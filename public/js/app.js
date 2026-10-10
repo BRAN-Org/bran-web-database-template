@@ -3,7 +3,7 @@ import { SimpleChart } from './charts.js';
 let appConfig = null;
 let currentOffset = 0;
 const currentLimit = 10;
-let currentPalette = 'simeon';
+let currentPalette = 'tokyonight';
 let currentChartType = 'bar';
 let currentSortDir = 'asc';
 
@@ -854,10 +854,15 @@ function initChartExports() {
   document.querySelectorAll('.btn-chart-export').forEach(btn => {
     btn.addEventListener('click', () => {
       const chartKey = btn.getAttribute('data-chart');
+      const format = (btn.getAttribute('data-format') || 'png').toLowerCase();
       if (chartInstances[chartKey]) {
         const cardHeader = btn.closest('.chart-card')?.querySelector('.chart-header h3 span');
         const titleText = cardHeader ? cardHeader.textContent.trim() : 'Gráfico Estatístico';
-        chartInstances[chartKey].exportPNG(titleText, `grafico-${chartKey}.png`);
+        if (format === 'svg') {
+          chartInstances[chartKey].exportSVG(`grafico-${chartKey}.svg`);
+        } else {
+          chartInstances[chartKey].exportPNG(titleText, `grafico-${chartKey}.png`);
+        }
       }
     });
   });

@@ -27,6 +27,7 @@ jobs:
           node --check src/routes.js
           node --check public/js/app.js
           node --check public/js/charts.js
+          node --check public/js/pure-svg-charts.bundle.js
 
   dataset-validation:
     name: Dataset Schema & EBBC Mock Validation
