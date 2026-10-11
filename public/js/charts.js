@@ -2,7 +2,7 @@
  * Componente de Gráficos Vetoriais Nativos em SVG (Zero-Dependency)
  * Desenvolvido para o ecossistema BRAN Org com tecnologia pure-svg-charts.
  * Suporta Barras, Linhas Suaves (Catmull-Rom Bézier), Rosca (Donut),
- * temas visuais reativos e exportação direta em vetor SVG e imagem PNG (2x).
+ * Sparklines KPI, temas visuais reativos e exportação direta em vetor SVG e imagem PNG (2x).
  */
 import {
   mountChart,
@@ -10,6 +10,7 @@ import {
   renderBarChart,
   renderLineChart,
   renderDonutChart,
+  renderSparkline,
   CHART_VARIANTS,
   exportChartAsImage
 } from './pure-svg-charts.bundle.js';
@@ -31,11 +32,12 @@ const PALETTE_MAP = {
 
 export class SimpleChart {
   constructor(containerId) {
+    this.containerId = typeof containerId === 'string' ? containerId : (containerId?.id || '');
     this.container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
     if (!this.container) return;
 
     this.palette = 'tokyonight';
-    this.chartType = 'bar';
+    this.chartType = 'auto'; // 'auto' usa o melhor tipo conceitual para o dado
     this.lastData = null;
     this.lastLabelKey = 'name';
     this.lastValueKey = 'count';
@@ -46,11 +48,25 @@ export class SimpleChart {
   }
 
   setChartType(type) {
-    if (type === 'radar') {
-      this.chartType = 'donut';
-    } else {
-      this.chartType = type || 'bar';
+    this.chartType = type || 'auto';
+  }
+
+  getResolvedChartType() {
+    if (this.chartType !== 'auto') {
+      if (this.chartType === 'radar') return 'donut';
+      return this.chartType;
     }
+
+    // Modo Automático (Smart Defaults cientométricos):
+    // - Histórico de Anos: Linha Bézier contínua com gradiente
+    // - Seções / Eixos: Rosca / Donut proporcional
+    // - Autores / Pesquisadores: Barras de ranking de frequência
+    // - Palavras-chave: Barras de frequência
+    if (this.containerId === 'chart-years') return 'line';
+    if (this.containerId === 'chart-sections') return 'donut';
+    if (this.containerId === 'chart-authors') return 'bar';
+    if (this.containerId === 'chart-keywords') return 'bar';
+    return 'bar';
   }
 
   getContainerHeight() {
@@ -65,7 +81,53 @@ export class SimpleChart {
     this.lastLabelKey = labelKey;
     this.lastValueKey = valueKey;
 
-    // Normalizar dados: objetos chave-valor { "2020": 5 } ou arrays [{ name: 'A', count: 10 }]
+    const resolvedType = this.getResolvedChartType();
+    const height = this.getContainerHeight();
+
+    // 1. Suporte a Séries Múltiplas Empilhadas (Multi-Series Stacked)
+    if (data.series && Array.isArray(data.series)) {
+      const formattedSeries = data.series.map((s, idx) => ({
+        id: s.id || `series-${idx}`,
+        name: s.name,
+        color: s.color,
+        data: s.data.map(d => ({
+          label: String(d.year || d.label || d[labelKey]),
+          value: Number(d.count ?? d.value ?? 0)
+        }))
+      }));
+
+      if (resolvedType === 'bar') {
+        renderBarChart(this.container, {
+          series: formattedSeries,
+          stacked: true,
+          showLegend: true,
+          variant: this.palette,
+          card: false,
+          responsive: true,
+          height,
+          radius: 6,
+          valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
+        });
+      } else {
+        renderLineChart(this.container, {
+          series: formattedSeries,
+          stacked: true,
+          showLegend: true,
+          variant: this.palette,
+          card: false,
+          responsive: true,
+          height,
+          smooth: true,
+          curvature: 0.25,
+          fillGradient: true,
+          crosshair: true,
+          valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
+        });
+      }
+      return;
+    }
+
+    // 2. Normalização de dados univariados
     let items = [];
     if (Array.isArray(data)) {
       items = data.map((item, idx) => {
@@ -88,9 +150,8 @@ export class SimpleChart {
       return;
     }
 
-    const height = this.getContainerHeight();
-
-    if (this.chartType === 'line') {
+    // 3. Renderização conforme tipo resolvido
+    if (resolvedType === 'line') {
       renderLineChart(this.container, {
         data: items,
         variant: this.palette,
@@ -105,8 +166,8 @@ export class SimpleChart {
         animated: true,
         valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
       });
-    } else if (this.chartType === 'donut') {
-      // Para rosca, agrupamos categorias além das top 7 em "Outros"
+    } else if (resolvedType === 'donut') {
+      // Rosca: agrupa a partir do 8º item em "Outros" para legibilidade
       const maxSlices = 7;
       let donutSlices = items.slice(0, maxSlices).map(it => ({
         label: it.label,
@@ -133,7 +194,7 @@ export class SimpleChart {
         valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
       });
     } else {
-      // Bar chart
+      // Barras (ranking / contagem)
       renderBarChart(this.container, {
         data: items,
         variant: this.palette,
@@ -173,5 +234,24 @@ export class SimpleChart {
   }
 }
 
+/**
+ * Utilitário para renderizar mini-gráficos de tendência (Sparklines)
+ * em cards de KPIs e painéis resumidos.
+ */
+export function renderMiniSparkline(containerId, data = [], color = '#7aa2f7') {
+  const container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+  if (!container || !data || data.length === 0) return;
+
+  renderSparkline(container, {
+    data,
+    width: 96,
+    height: 32,
+    color,
+    smooth: true,
+    fillArea: true,
+    showEndDot: true
+  });
+}
+
 export const PureSvgChart = SimpleChart;
-export { CHART_VARIANTS, exportChartAsImage };
+export { CHART_VARIANTS, exportChartAsImage, renderSparkline };

@@ -1,10 +1,10 @@
-import { SimpleChart } from './charts.js';
+import { SimpleChart, renderMiniSparkline } from './charts.js';
 
 let appConfig = null;
 let currentOffset = 0;
 const currentLimit = 10;
 let currentPalette = 'tokyonight';
-let currentChartType = 'bar';
+let currentChartType = 'auto';
 let currentSortDir = 'asc';
 
 const chartInstances = {};
@@ -214,6 +214,32 @@ async function loadStatsDashboard() {
     if (authorsEl) authorsEl.textContent = authorCount;
     const homeAuthors = document.getElementById('home-stat-authors');
     if (homeAuthors) homeAuthors.textContent = authorCount;
+
+    // Renderizar Sparklines nos 4 KPI Cards
+    try {
+      const rawYears = stats.breakdowns?.yearDistribution?.data || {};
+      const sortedYears = Object.keys(rawYears).sort((a, b) => Number(a) - Number(b));
+      const yearlyTrend = sortedYears.map(yr => Number(rawYears[yr] || 0));
+
+      if (yearlyTrend.length > 0) {
+        renderMiniSparkline('sparkline-total', yearlyTrend, '#7aa2f7');
+        const cumulativeYears = sortedYears.map((_, i) => i + 1);
+        renderMiniSparkline('sparkline-years', cumulativeYears, '#38bdf8');
+      }
+
+      const secData = stats.topLists?.topSections?.data || (stats.breakdowns?.sectionBreakdown?.data ? Object.values(stats.breakdowns.sectionBreakdown.data) : null);
+      if (secData && secData.length > 0) {
+        const secValues = secData.map(d => typeof d === 'number' ? d : d.count || d.value || 0);
+        renderMiniSparkline('sparkline-sections', secValues, '#34d399');
+      }
+
+      if (stats.topLists?.topAuthors?.data && stats.topLists.topAuthors.data.length > 0) {
+        const authValues = stats.topLists.topAuthors.data.map(d => d.count || d.value || 0);
+        renderMiniSparkline('sparkline-authors', authValues, '#f472b6');
+      }
+    } catch (sparkErr) {
+      console.warn('Sparklines não puderam ser renderizados:', sparkErr);
+    }
 
     // Fallbacks para Gráfico 2 (Eixos / Fontes / Etapas)
     let sectionsData = stats.breakdowns?.sectionBreakdown?.data || stats.topLists?.topSections?.data;

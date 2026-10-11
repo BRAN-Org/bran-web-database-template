@@ -441,13 +441,29 @@ body {
   letter-spacing: 0.5px;
   margin-bottom: 0.4rem;
 }
+.stat-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
 .stat-value {
   font-family: var(--font-mono);
   font-size: 1.9rem;
   font-weight: 700;
-  margin-bottom: 0.2rem;
   color: var(--text-primary);
   letter-spacing: -0.5px;
+}
+.stat-sparkline {
+  width: 96px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.stat-sparkline svg {
+  display: block;
 }
 .stat-footer {
   font-size: 0.75rem;
