@@ -1095,8 +1095,14 @@ function initTabs() {
     btn.addEventListener('click', () => {
       const target = btn.getAttribute('data-tab');
       switchTab(target);
+      window.location.hash = target;
     });
   });
+
+  const hash = window.location.hash?.replace('#', '');
+  if (hash && document.getElementById(hash)) {
+    switchTab(hash);
+  }
 
   const btnHeroExplore = document.getElementById('btn-hero-explore');
   if (btnHeroExplore) {
