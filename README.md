@@ -1,184 +1,119 @@
 # BRAN Web Database Template
 
 <p align="center">
- <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
- <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
- <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
- <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
- <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
+  <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?logo=github" alt="BRAN Org"></a>
+  <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg" alt="BOAI Signatory"></a>
+  <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg" alt="FAIR Principles"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code-GPLv3-blue.svg" alt="GPLv3"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Data-CC_BY--NC--SA_4.0-lightgrey.svg" alt="CC BY-NC-SA 4.0"></a>
 </p>
 
-Template leve, modular e reproduzível para criação de **APIs REST públicas** e **Dashboards Interativos** para bases de dados acadêmicas e científicas brasileiras no ecossistema da **[BRAN Org](https://github.com/BRAN-Org)** (inspirado na arquitetura do [EBBC-OpenData](https://github.com/GabrielBaiano/EBBC-OpenData)).
+Template padrão da **[BRAN Org](https://github.com/BRAN-Org)** para publicação de bases de dados acadêmicas e científicas abertas. Fornece uma **API REST pública de alta performance** e um **Dashboard Web interativo com gráficos SVG nativos**, sem necessidade de bundlers ou transpiladores pesados.
 
 ---
 
-## Recursos Principais
+## ⚡ Recursos e Arquitetura
 
-- **Zero-Build & Alta Performance**: Desenvolvido em Node.js com ES Modules (`"type": "module"`), sem necessidade de transpiladores ou dependências pesadas (`express` e `cors`).
-- **Totalmente Agnosticismo a Dados**: Configure o esquema dos dados, nome da entidade, campos de busca, filtros e estatísticas através de um único arquivo de configuração (`config/dataset.config.json`).
-- **REST API Completa**:
- - `GET /api/v1/:entity`: Busca textual global, filtros por facetas, ordenação e paginação.
- - `GET /api/v1/:entity/stats`: Estatísticas agregadas calculadas dinamicamente.
- - `GET /api/v1/:entity/:key` e `/api/v1/:entity/by-key/*`: Busca exata por DOI ou ID (suporta barras brutas e URLs).
- - `GET /api/v1/:entity/export`: Exportação em streaming nos formatos **JSON** e **CSV** (com BOM UTF-8 para exibição nativa no Excel).
-- **Dashboard Web Interativo (Portal)**:
- - **Métricas e Gráficos**: Visualizações vetoriais nativas e responsivas em SVG powered by [`pure-svg-charts`](https://github.com/GabrielBaiano/pure-svg-charts) (evoluções temporais, rankings, rosca/donut com suporte a exportação em vetor SVG e imagem PNG).
- - **Explorador Avançado**: Tabela com busca em tempo real, filtros laterais por faceta e exportações instantâneas.
- - **API Sandbox**: Gerador dinâmico de snippets de código em **JavaScript (Fetch)**, **Python (Requests)** e **cURL**.
- - **Temas Visuais**: Suporte a *Glass Dark*, *Neon Cyberpunk* e *Apple Minimalist*.
-- **Pronto para Deploy na Vercel**: Inclui arquivo `vercel.json` configurado para publicação em 1 clique.
+- **Zero-Build & Alta Performance**: Desenvolvido em Node.js com ES Modules (`"type": "module"`), dependendo apenas de `express` e `cors`.
+- **Agnóstico a Dados**: Entidade, esquemas, facetas de busca, ordenação e filtros configurados centralmente via `config/dataset.config.json`.
+- **Contratos Canônicos (JSON Schema)**: Validação estrita de schemas de artigos (`schemas/article.v1.schema.json`) e proveniência criptográfica (`schemas/provenance.v1.schema.json`).
+- **REST API Pública**:
+  - `GET /api/v1/:entity`: Busca textual global (`?q=`), filtros facetados, ordenação e paginação.
+  - `GET /api/v1/:entity/stats`: Estatísticas consolidadas e distribuições temporais em tempo real.
+  - `GET /api/v1/:entity/:key`: Consulta exata por ID ou DOI.
+  - `GET /api/v1/:entity/export`: Streaming nos formatos CSV (BOM UTF-8 para Excel), JSON, BibTeX e RIS.
+- **Painel Web com Gráficos SVG Nativos**: Visualizações vetoriais responsivas via [`pure-svg-charts`](https://github.com/GabrielBaiano/pure-svg-charts) com exportação SVG/PNG e API Sandbox com gerador de código (cURL, Python, JS).
+- **Auditoria Automatizada (CRONA Bot)**: Scripts integrados para conferência estrita de integridade de dados e resolução de identificadores persistentes.
 
 ---
 
-## Estrutura do Projeto
+## 🚀 Como Criar uma Nova Base de Dados a Partir Deste Template
 
-```
-bran-web-database-template/
-├── config/
-│ └── dataset.config.json # Configuração central do dataset, entidade, licença e filtros
-├── data/
-│ └── sample_dataset.json # Arquivos de dados em formato JSON (auto-carregados)
-├── public/
-│ ├── css/style.css # Design system e temas
-│ ├── js/
-│ │ ├── app.js # Lógica do painel e interação da API Sandbox
-│ │ ├── charts.js # Componente de gráficos vetoriais nativos em SVG
-│ │ └── pure-svg-charts.bundle.js # Motor vetorial autônomo pure-svg-charts
-│ └── index.html # Interface do Portal Web
-├── scripts/
-│ ├── convert_csv_to_json.js # Script utilitário para converter CSV em JSON
-│ └── validate_dataset.js # Validador de esquemas e campos obrigatórios
-├── src/
-│ ├── config.js # Loader de configurações
-│ ├── dataManager.js # Indexação em memória, busca, filtros e paginação
-│ ├── exportEngine.js # Motor de exportação streaming (JSON / CSV com BOM)
-│ ├── statsEngine.js # Agregador de métricas e distribuições
-│ └── routes.js # Rotas da API REST configuráveis
-├── tests/
-│ ├── unit.test.js # Testes unitários nativos (node --test)
-│ └── api.test.js # Testes de integração HTTP
-├── server.js # Servidor Express principal
-└── vercel.json # Configuração para deploy na Vercel
-```
-
----
-
-## Como Usar Este Template para um Novo Dataset
-
-### 1. Clonar e Instalar Dependências
+### 1. Clonar e Instalar
 ```bash
-git clone https://github.com/BRAN-Org/bran-web-database-template.git meu-novo-dataset
-cd meu-novo-dataset
+git clone https://github.com/BRAN-Org/bran-web-database-template.git meu-evento-open-database
+cd meu-evento-open-database
 npm install
 ```
 
 ### 2. Configurar o Dataset (`config/dataset.config.json`)
-Edite o arquivo `config/dataset.config.json` para definir as informações específicas da sua base de dados:
-
+Defina os metadados do evento, entidade e facetas de busca:
 ```json
 {
- "dataset": {
- "title": "Nome da Sua Base de Dados",
- "description": "Descrição sucinta dos metadados e acervo público.",
- "doi": "", // Opcional (Preencher apenas se fornecido)
- "license": "Code: GNU GPLv3 | Data: CC BY-NC-SA 4.0",
- "entityName": "publicacoes",
- "primaryKey": "doi"
- },
- "schema": {
- "searchFields": ["title", "abstract", "authors", "keywords"],
- "facets": [
- { "key": "year", "label": "Ano de Publicação", "type": "number" },
- { "key": "author", "label": "Autor", "type": "string", "targetField": "authors" }
- ]
- }
+  "dataset": {
+    "title": "Nome do Evento / Periódico Open Database",
+    "description": "Descrição sucinta do acervo histórico e dos metadados.",
+    "version": "1.0.0",
+    "entityName": "articles",
+    "primaryKey": "id",
+    "secondaryKey": "doi"
+  },
+  "schema": {
+    "searchFields": ["title", "abstract", "authors", "keywords"],
+    "facets": [
+      { "key": "year", "label": "Ano", "type": "number", "targetField": "year" },
+      { "key": "author", "label": "Autor", "type": "string", "targetField": "authors" }
+    ]
+  }
 }
 ```
 
-### 3. Adicionar Seus Dados
-Coloque um ou mais arquivos `.json` com a estrutura dos registros dentro da pasta `data/`.
+### 3. Inserir Dados e Proveniência
+- Insira o arquivo JSON estruturado em `data/<nome>_articles.json`.
+- Registre o hash SHA-256 e metadados de extração em `provenance.json`.
 
-Se os seus dados estiverem em **CSV**, utilize o conversor automático incluído no template:
+### 4. Gerar README Inicial do Evento
 ```bash
-npm run data:convert ./caminho/para/meu_arquivo.csv meu_dataset.json
+# Gera o README.md conciso pré-formatado a partir de EVENT_README_TEMPLATE.md
+npm run init:event
 ```
 
-Para validar a integridade dos dados antes do deploy:
+### 5. Validar Integridade e Testar
 ```bash
+# Validar conformidade de schemas e hashes SHA-256
 npm run data:validate
-```
 
-### 4. Executar Localmente
-```bash
-# Modo desenvolvimento (com auto-reload)
-npm run dev
+# Rodar auditoria profunda com CRONA Bot engine
+npm run data:audit
 
-# Modo produção
+# Executar suite de testes nativa (Node 20+ LTS)
+npm test
+
+# Iniciar servidor localmente
 npm start
 ```
-Acesse a aplicação no navegador em: `http://localhost:3000`
+Acesse no navegador: `http://localhost:3000`
 
 ---
 
-## Testes Automatizados
+## 📁 Estrutura do Repositório
 
-O template utiliza o executor nativo de testes do Node.js (`node --test`), sem necessidade de dependências externas como Jest ou Mocha:
-
-```bash
-npm test
+```
+bran-web-database-template/
+├── config/                  # dataset.config.json (configurações do evento e campos)
+├── data/                    # Dataset de produção (ex: evento_articles.json)
+├── schemas/                 # Schemas canônicos JSON Schema (article e provenance)
+├── public/                  # Portal estático (HTML, CSS e bundle pure-svg-charts)
+├── scripts/                 # Validadores, conversor CSV, auditoria CRONA e bundles
+├── src/                     # Núcleo da API (dataManager, statsEngine, routes, exportEngine)
+├── tests/                   # Testes unitários e testes de integração REST
+├── .templatesyncignore      # Arquivos protegidos contra sobrescrita na sincronização
+├── EVENT_README_TEMPLATE.md # Template conciso para os repositórios filhos de eventos
+└── server.js                # Servidor Express principal
 ```
 
 ---
 
-## Deploy (Vercel / Render)
+## 🔄 Sincronização Automática com Repositórios Filhos (Template Sync)
 
-### Deploy na Vercel
-1. Instale a CLI da Vercel (`npm i -g vercel`) ou conecte o repositório no painel web da Vercel.
-2. Execute o comando:
- ```bash
- vercel
- ```
-O arquivo `vercel.json` incluído cuidará de direcionar a API REST e a interface estática automaticamente.
+O repositório utiliza o GitHub Action `actions-template-sync` para propagar atualizações de infraestrutura (`src/`, `public/`, `schemas/`, `tests/`) para todos os repositórios de bases derivados da organização:
 
-## Sincronização Automática com Repositórios Filhos (Auto-Sync)
-
-Quando o repositório modelo `BRAN-Org/bran-web-database-template` for atualizado com novas funcionalidades, melhorias de UI ou correções na API, é possível **atualizar automaticamente todos os repositórios derivados da organização** (ex: `EBBC-OpenData`):
-
-### Como Funciona a Sincronização Automática:
-1. **GitHub Action (`template-sync.yml`)**: O repositório filho contém a Action em `.github/workflows/template-sync.yml`.
-2. **Pull Request Automático**: Toda segunda-feira (ou ao disparar manualmente via `workflow_dispatch`), o GitHub Action verifica se há novos commits no template central `BRAN-Org/bran-web-database-template`.
-3. **Preservação dos Dados Locais**: O mecanismo mescla as alterações no código da infraestrutura (`src/`, `public/`, `server.js`), mantendo **100% intactos** os arquivos de dados locais (`data/`, `mock/`, `dataset.config.json`).
-4. **Revisão e Merge**: A equipe da BRAN Org recebe um Pull Request pronto com o título `chore(sync): Atualizações automáticas do BRAN Web Database Template` para aprovar em 1 clique.
+- **Arquivos Protegidos:** Diretórios de dados (`data/`), mock de testes (`mock/`), configurações locais (`config/dataset.config.json`), `README.md`, `provenance.json` e `package.json` são preservados via `.templatesyncignore`.
+- **Integridade Garantida:** Cada PR de sincronização passa pelo `Template Sync Guard` e `CRONA Guard` para assegurar que nenhum dado de produção seja afetado.
 
 ---
 
-## Confiabilidade e Auditagem dos Dados
+## ⚖️ Licenciamento
 
-| Nível de Confiabilidade | Nota & Justificativa do Acervo |
-| :---: | :--- |
-| {{RELIABILITY_BADGE}} | {{RELIABILITY_JUSTIFICATION}} |
-
----
-
-## Princípios e Licença
-
-Este template foi construído em conformidade com as diretrizes internacionais de Ciência Aberta:
-- **[Princípios FAIR](https://www.go-fair.org/fair-principles/)**: Dados *Findable, Accessible, Interoperable, Reusable*.
-- **[BOAI](https://www.budapestopenaccessinitiative.org/)**: Livre acesso e reutilização do conhecimento acadêmico.
-- **Licenciamento Duplo**:
- - **Código-fonte & Engine**: [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html) — Garante Ciência Aberta e código livre livre de fechamentos proprietários.
- - **Dataset Científico & Metadados (`data/`)**: [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Permite uso e distribuição exclusivamente para pesquisa não-comercial, proibindo expressamente a raspagem ou ingestão para treinamento comercial de modelos de Inteligência Artificial sem autorização prévia.
-
----
-
-## Submissão de Dados
-
-Possui dados acadêmicos ou acervos científicos que gostaria de disponibilizar publicamente pela BRAN Org? Preencha o formulário de submissão:
-
- **[Formulário de Submissão de Datasets](https://forms.gle/jNBuP1mjyUXc6v1fA)**
-
----
-
-<p align="center">
- Desenvolvido com pela <strong>BRAN Org</strong>
-</p>
+- **Código e Engine:** [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html) — Garante software livre e auditável.
+- **Dados e Metadados Científicos:** [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Livre para pesquisa acadêmica; vedado uso ou raspagem para modelos comerciais de IA sem autorização.
